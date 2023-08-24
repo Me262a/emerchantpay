@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.1.2'
+    id 'checkstyle'
 }
 
 group = 'com.vvkozlov.emerchantpay'
@@ -35,6 +36,19 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.security:spring-security-test'
+}
+
+checkstyle {
+    toolVersion = '10.12.2'
+    configFile = file("${project.projectDir}/config/checkstyle.xml")
+    showViolations = true
+}
+
+tasks.withType(Checkstyle).configureEach {
+    reports {
+        xml.required = false
+        html.required = true
+    }
 }
 
 tasks.named('test') {
