@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5450/dev_emerchantpay
+    username: dev_admin
+    password: dev_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        default_schema: merchant
+  flyway:
+    schemas: merchant
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+springdoc:
+  swagger-ui:
+    path: /sw.html
+    docExpansion: list
+    deepLinking: true
+server:
+  port: 8080
+logging:
+  level:
+    root: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
