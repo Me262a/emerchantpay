@@ -3,6 +3,7 @@ package com.vvkozlov.emerchantpay.merchant.domain.entities;
 import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.UUID;
 
@@ -13,12 +14,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class Merchant {
-
     @Id
     @GeneratedValue
     @Column(columnDefinition = "uuid", updatable = false)
     private UUID id;
 
+    /**
+     * Id for this user received from external authentication server (usually oauth UUID)
+     */
+    @Column(name = "auth_id")
+    private String authId;
     private String name;
     private String description;
     private String email;

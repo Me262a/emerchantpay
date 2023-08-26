@@ -13,13 +13,31 @@ public interface MerchantMapper {
     MerchantMapper INSTANCE = Mappers.getMapper(MerchantMapper.class);
 
     /**Map entity to DTO.
-     * @param merchant - entity to map
+     * @param entity - entity to map
      * @return mapped dto*/
-    MerchantViewDTO toDto(Merchant merchant);
+    default MerchantViewDTO toDto(Merchant entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        MerchantViewDTO dto = new MerchantViewDTO();
+        dto.setAuthId(entity.getAuthId());
+        dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
+        dto.setEmail(entity.getEmail());
+        dto.setId(entity.getId());
+        dto.setStatus(entity.getStatus());
+        dto.setTotalTransactionSum(entity.getTotalTransactionSum());
+
+        return dto;
+    }
 
     /**Map DTO to entity.
      * @param dto dto to map
      * @return mapped entity
      */
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "authId", ignore = true)
+    @Mapping(target = "totalTransactionSum", ignore = true)
     Merchant toEntity(MerchantEditDTO dto);
 }

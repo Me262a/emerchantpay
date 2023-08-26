@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5450/dev_emerchantpay
-    username: dev_admin
-    password: dev_password
+    username: dev_db_admin
+    password: dev_db_password
     driver-class-name: org.postgresql.Driver
   jpa:
     properties:
@@ -10,16 +10,28 @@ spring:
         default_schema: merchant
   flyway:
     schemas: merchant
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:5451/realms/emerchantpay/protocol/openid-connect/certs
+          #issuer-uri: http://localhost:5451/realms/emerchantpay/.well-known/openid-configuration
 springdoc:
   swagger-ui:
     path: /sw.html
     docExpansion: list
     deepLinking: true
+keycloak-admin:
+  serverUrl: http://localhost:5451
+  #TODO: Create and use admin from emerchantpay realm, not master realm
+  realm: master
+  clientId: admin-cli
+  clientSecret:
+  username: dev_kc_admin
+  password: dev_kc_password
 server:
   port: 8080
 logging:
   level:
     root: DEBUG
-    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+#    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

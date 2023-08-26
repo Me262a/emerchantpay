@@ -5,12 +5,43 @@ services:
     image: postgres:15
     environment:
       - POSTGRES_DB=dev_emerchantpay
-      - POSTGRES_USER=dev_admin
-      - POSTGRES_PASSWORD=dev_password
+      - POSTGRES_USER=dev_db_admin
+      - POSTGRES_PASSWORD=dev_db_password
     ports:
       - "5450:5432"
+    networks:
+      - emerchantpay_network
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./config/db-init/:/docker-entrypoint-initdb.d/
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.1
+    command: start-dev --import-realm
+    environment:
+      - KEYCLOAK_ADMIN=dev_kc_admin
+      - KEYCLOAK_ADMIN_PASSWORD=dev_kc_password
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=db
+      - KC_DB_URL_PORT=5432
+      - KC_DB_URL_DATABASE=dev_emerchantpay
+      - KC_DB_USERNAME=dev_db_admin
+      - KC_DB_PASSWORD=dev_db_password
+      - KC_DB_SCHEMA=keycloak
+      - KC_HEALTH_ENABLED=true
+      - KC_METRICS_ENABLED=true
+    ports:
+      - "5451:8080"
+    volumes:
+      - ./config/keycloak-emerchantpay-realm.json:/opt/keycloak/data/import/keycloak-emerchantpay-realm.json
+    networks:
+      - emerchantpay_network
+    depends_on:
+      - db
 
 volumes:
   postgres_data:
+
+networks:
+  emerchantpay_network:
+    driver: bridge

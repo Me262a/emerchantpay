@@ -1,0 +1,76 @@
+{
+  "realm": "emerchantpay",
+  "displayName": "EMerchantPay",
+  "enabled": true,
+  "requiredCredentials": [
+    "password"
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin"
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "merchant",
+        "description": "Merchant Role"
+      },
+      {
+        "name": "admin",
+        "description": "Admin Role"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "emerchantpay-client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "access.token.lifespan": "43200"
+      },
+      "baseUrl": "http://localhost:8080",
+      "adminUrl": "http://localhost:8080",
+      "bearerOnly": false,
+      "redirectUris": [
+        "http://localhost:8080/*",
+        "http://127.0.0.1:8080/*"
+      ],
+      "secret": "emerchantpay_client_secret",
+      "authorizationServicesEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocolMappers": [
+        {
+          "name": "Authorities Mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "false",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "authorities",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ]
+}
