@@ -1,5 +1,5 @@
 {
-  "realm": "emerchantpay",
+  "realm": "emerchantpay-test",
   "displayName": "EMerchantPay",
   "enabled": true,
   "requiredCredentials": [
