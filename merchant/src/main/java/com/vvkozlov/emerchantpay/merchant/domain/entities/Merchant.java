@@ -15,9 +15,9 @@ import java.util.UUID;
 @Builder
 public class Merchant {
     @Id
-    @GeneratedValue
-    @Column(columnDefinition = "uuid", updatable = false)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
+    private long id;
 
     /**
      * Id for this user received from external authentication server (usually oauth UUID)

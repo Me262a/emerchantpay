@@ -47,7 +47,7 @@ public class MerchantService {
      */
     @Transactional(readOnly = true)
     public OperationResult<MerchantViewDTO> getMerchant(final String id) {
-        Optional<Merchant> merchantOpt = merchantRepository.findById(UUID.fromString(id));
+        Optional<Merchant> merchantOpt = merchantRepository.findByAuthId(id);
         if (merchantOpt.isPresent()) {
             Merchant merchant = merchantOpt.get();
             MerchantViewDTO viewDTO = MerchantMapper.INSTANCE.toDto(merchant);
@@ -82,7 +82,7 @@ public class MerchantService {
     @Transactional
     public OperationResult<MerchantViewDTO> updateMerchant(final String id, final MerchantEditDTO dto) {
         try {
-            Optional<Merchant> existingMerchant = merchantRepository.findById(UUID.fromString(id));
+            Optional<Merchant> existingMerchant = merchantRepository.findByAuthId(id);
 
             if (existingMerchant.isPresent()) {
                 Merchant merchantToUpdate = existingMerchant.get();

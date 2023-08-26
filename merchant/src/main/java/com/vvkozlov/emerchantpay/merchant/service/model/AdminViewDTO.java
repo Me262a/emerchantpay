@@ -2,6 +2,7 @@ package com.vvkozlov.emerchantpay.merchant.service.model;
 
 import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
@@ -10,7 +11,7 @@ import java.util.UUID;
  */
 @Data
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class AdminViewDTO extends BaseUserViewDTO {
 }

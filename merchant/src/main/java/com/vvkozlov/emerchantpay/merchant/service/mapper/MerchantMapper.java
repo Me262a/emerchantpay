@@ -12,25 +12,12 @@ public interface MerchantMapper {
     /**Mapper instance used or mapping.*/
     MerchantMapper INSTANCE = Mappers.getMapper(MerchantMapper.class);
 
-    /**Map entity to DTO.
-     * @param entity - entity to map
-     * @return mapped dto*/
-    default MerchantViewDTO toDto(Merchant entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        MerchantViewDTO dto = new MerchantViewDTO();
-        dto.setAuthId(entity.getAuthId());
-        dto.setName(entity.getName());
-        dto.setDescription(entity.getDescription());
-        dto.setEmail(entity.getEmail());
-        dto.setId(entity.getId());
-        dto.setStatus(entity.getStatus());
-        dto.setTotalTransactionSum(entity.getTotalTransactionSum());
-
-        return dto;
-    }
+    /**Map DTO to entity.
+     * @param entity entity to map
+     * @return mapped dto
+     */
+    @Mapping(source = "authId", target = "id")
+    MerchantViewDTO toDto(Merchant entity);
 
     /**Map DTO to entity.
      * @param dto dto to map

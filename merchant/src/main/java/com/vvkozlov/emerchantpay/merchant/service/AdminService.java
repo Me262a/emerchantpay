@@ -1,31 +1,21 @@
 package com.vvkozlov.emerchantpay.merchant.service;
 
 
-import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
 import com.vvkozlov.emerchantpay.merchant.domain.constants.UserRoles;
-import com.vvkozlov.emerchantpay.merchant.domain.entities.Merchant;
-import com.vvkozlov.emerchantpay.merchant.infra.repository.MerchantRepository;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
-import com.vvkozlov.emerchantpay.merchant.service.mapper.MerchantMapper;
 import com.vvkozlov.emerchantpay.merchant.service.model.AdminViewDTO;
-import com.vvkozlov.emerchantpay.merchant.service.model.MerchantEditDTO;
-import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Admin service to import admins.
@@ -69,7 +59,7 @@ public class AdminService {
                 var oAuthCreateUserResult =  oAuthServerAdminClient
                         .addUser(admin.getEmail(), adminRoles);
                 if (oAuthCreateUserResult.isSuccess()) {
-                    admin.setAuthId(oAuthCreateUserResult.getResult());
+                    admin.setId(oAuthCreateUserResult.getResult());
                     adminsImported.add(admin);
                 }
             }
