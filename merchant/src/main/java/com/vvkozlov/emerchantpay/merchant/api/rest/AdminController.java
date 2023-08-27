@@ -127,4 +127,40 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @Operation(
+            summary = "Remove a merchant by user auth ID",
+            description = "Delete a merchant based on the provided user ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully removed the merchant"),
+            @ApiResponse(responseCode = "500", description = "Server error - check the server log")
+    })
+    @DeleteMapping("merchant/{merchantId}")
+    public ResponseEntity<Void> removeMerchantById(@PathVariable String merchantId) {
+        var operationResult = merchantService.removeMerchantById(merchantId);
+        if (operationResult.isSuccess()) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @Operation(
+            summary = "Remove all merchants",
+            description = "Delete all merchants from the current microservice and auth server."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully removed all merchants"),
+            @ApiResponse(responseCode = "500", description = "Server error - check the server log")
+    })
+    @DeleteMapping("merchant")
+    public ResponseEntity<Void> removeAllMerchants() {
+        var operationResult = merchantService.removeAllMerchants();
+        if (operationResult.isSuccess()) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }

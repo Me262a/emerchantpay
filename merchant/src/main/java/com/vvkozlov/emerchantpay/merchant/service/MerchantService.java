@@ -22,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -151,6 +153,34 @@ public class MerchantService {
         } catch (Exception e) {
             //TODO: Check if failing user was created on auth server, rollback it there
             return OperationResult.failure("An error occurred while importing merchants: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public OperationResult<Void> removeMerchantById(final String userId) {
+        try {
+            oAuthServerAdminClient.removeMerchantById(userId);
+            merchantRepository.deleteByAuthId(userId);
+            return OperationResult.success(null);
+        } catch (Exception e) {
+            return OperationResult.failure("An error occurred while removing the user: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public OperationResult<List<String>> removeAllMerchants() {
+        final String roleName = UserRoles.ROLE_MERCHANT;
+        try {
+            OperationResult<List<String>> userIdsToRemoveResult = oAuthServerAdminClient.removeAllUsersWithRole(roleName);
+            if (userIdsToRemoveResult.isSuccess()) {
+                merchantRepository.deleteAllInBatch();
+                return userIdsToRemoveResult;
+            } else {
+                return OperationResult.failure("Failed to remove users by role:" + roleName);
+            }
+
+        } catch (Exception e) {
+            return OperationResult.failure("An error occurred while removing users by role: " + e.getMessage());
         }
     }
 }

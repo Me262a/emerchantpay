@@ -1,5 +1,6 @@
 package com.vvkozlov.emerchantpay.merchant.infra.auth;
 
+import com.vvkozlov.emerchantpay.merchant.domain.constants.UserRoles;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import jakarta.ws.rs.core.Response;
@@ -13,9 +14,13 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The Keycloak server admin client to manage users registered at keycloak.
+ */
 @Service
 public class KeycloakAdminClient implements OAuthServerAdminClient {
 
@@ -28,6 +33,14 @@ public class KeycloakAdminClient implements OAuthServerAdminClient {
         this.keycloak = keycloak;
     }
 
+    /**
+     * Adds a user to keycloak
+     * Sets password - not for real production usage
+     *
+     * @param email email to be used as user login
+     * @param realmRoles keycloak realm role names to be added for user
+     * @return keycloak id of added user
+     */
     @Override
     public OperationResult<String> addUser(String email, List<String> realmRoles) {
         RealmResource realmResource = keycloak.realm(REALM_NAME);
@@ -49,6 +62,73 @@ public class KeycloakAdminClient implements OAuthServerAdminClient {
 
             return OperationResult.success(userId);
         }
+    }
+
+    /**
+     * Removes a user with specified keycloak id
+     *
+     * @param kcUserId id of user to be removed
+     * @return result of operation
+     */
+    @Override
+    public OperationResult<Void> removeMerchantById(String kcUserId) {
+        RealmResource realmResource = keycloak.realm(REALM_NAME);
+        UsersResource usersResource = realmResource.users();
+        UserResource userResource = usersResource.get(kcUserId);
+
+        RoleRepresentation merchantRole = realmResource.roles().get(UserRoles.ROLE_MERCHANT).toRepresentation();
+        List<RoleRepresentation> userRoles = userResource.roles().realmLevel().listEffective();
+
+        if (userRoles.contains(merchantRole)) {
+            try {
+                userResource.remove();
+                return OperationResult.success(null);
+            } catch (Exception e) {
+                return OperationResult.failure("Failed to remove user with ID: " + kcUserId + ". Error: " + e.getMessage());
+            }
+        } else {
+            return OperationResult.failure("User with ID: " + kcUserId + " does not have the ROLE_MERCHANT role.");
+        }
+    }
+
+    /**
+     * Removes all users with specified rolename
+     * Dangerous - not for real production app
+     * Requires optimization (deletes users one by one - may be limitation of keycloak api)
+     *
+     * @param roleName rolename of users to be removed
+     * @return result of operation
+     */
+    @Override
+    public OperationResult<List<String>> removeAllUsersWithRole(String roleName) {
+        RealmResource realmResource = keycloak.realm(REALM_NAME);
+        UsersResource usersResource = realmResource.users();
+
+        RoleRepresentation removalRole = realmResource.roles().get(roleName).toRepresentation();
+        if (removalRole == null) {
+            return OperationResult.failure("Role not found: " + roleName);
+        }
+
+        List<UserRepresentation> usersWithMerchantRole = usersResource.search(null, null, null, null, 0, Integer.MAX_VALUE)
+                .stream()
+                .filter(user -> hasRole(user, removalRole))
+                .toList();
+
+        List<String> removedUserIds = new ArrayList<>();
+
+        for (UserRepresentation user : usersWithMerchantRole) {
+            String userId = user.getId();
+            usersResource.get(userId).remove();
+            removedUserIds.add(userId);
+        }
+
+        return OperationResult.success(removedUserIds);
+    }
+
+    private boolean hasRole(UserRepresentation user, RoleRepresentation role) {
+        RealmResource realmResource = keycloak.realm(REALM_NAME);
+        List<RoleRepresentation> userRoles = realmResource.users().get(user.getId()).roles().realmLevel().listAll();
+        return userRoles.stream().anyMatch(userRole -> userRole.getName().equals(role.getName()));
     }
 
     private UserRepresentation buildUserRepresentation(String email) {

@@ -2,10 +2,10 @@ package com.vvkozlov.emerchantpay.merchant.domain.entities;
 
 import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
-
-import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "merchant")
@@ -14,6 +14,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class Merchant {
+    /**
+     * Internal db id, not used
+     * */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
