@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5450/dev_emerchantpay
+    username: dev_db_admin
+    password: dev_db_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        default_schema: transaction
+  flyway:
+    schemas: transaction
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:5451/realms/emerchantpay/protocol/openid-connect/certs
+          #issuer-uri: http://localhost:5451/realms/emerchantpay/.well-known/openid-configuration
+springdoc:
+  swagger-ui:
+    path: /sw.html
+    docExpansion: list
+    deepLinking: true
+server:
+  port: 8081
+logging:
+  level:
+    root: DEBUG
+#    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
