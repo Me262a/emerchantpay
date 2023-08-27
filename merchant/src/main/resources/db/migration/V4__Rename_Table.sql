@@ -1,0 +1,1 @@
+ALTER TABLE merchant RENAME TO merchants;
