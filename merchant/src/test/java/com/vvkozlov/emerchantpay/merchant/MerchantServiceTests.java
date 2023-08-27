@@ -1,6 +1,5 @@
 package com.vvkozlov.emerchantpay.merchant;
 
-import com.vvkozlov.emerchantpay.merchant.domain.entities.Merchant;
 import com.vvkozlov.emerchantpay.merchant.infra.repository.MerchantRepository;
 import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
@@ -14,13 +13,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class MerchantServiceTests {

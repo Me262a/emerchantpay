@@ -3,7 +3,8 @@ package com.vvkozlov.emerchantpay.merchant.service.mapper;
 import com.vvkozlov.emerchantpay.merchant.domain.entities.Merchant;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantEditDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 /**Maps entity to DTO and vice versa.**/
