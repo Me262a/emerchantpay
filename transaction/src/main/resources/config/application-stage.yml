@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://db:5432/stage_emerchantpay
+    username: stage_db_admin
+    password: stage_db_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        default_schema: transaction
+  flyway:
+    schemas: transaction
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://keycloak:8080/realms/emerchantpay/protocol/openid-connect/certs
+          #issuer-uri: http://localhost:5451/realms/emerchantpay/.well-known/openid-configuration
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: transaction_microservice
+      auto-offset-reset: earliest
+      properties:
+        spring:
+          json:
+            use.type.headers: false
+            value:
+              default:
+                type: com.vvkozlov.emerchantpay.transaction.service.model.messagebroker.MerchantMbModel
+            trusted:
+              packages: '*'
+springdoc:
+  swagger-ui:
+    path: /sw.html
+    docExpansion: list
+    deepLinking: true
+webclient:
+  merchant:
+    connect-timeout: 2000
+    read-timeout: 2000
+    base-url: http://merchant-ms:8080
+server:
+  port: 8080
+logging:
+  level:
+#    root: DEBUG
+    root: ERROR
+    org.springframework.kafka: ERROR
+#    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

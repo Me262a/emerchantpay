@@ -4,29 +4,29 @@ services:
   db:
     image: postgres:15
     environment:
-      - POSTGRES_DB=dev_emerchantpay
-      - POSTGRES_USER=dev_db_admin
-      - POSTGRES_PASSWORD=dev_db_password
+      - POSTGRES_DB=stage_emerchantpay
+      - POSTGRES_USER=stage_db_admin
+      - POSTGRES_PASSWORD=stage_db_password
     ports:
       - "5450:5432"
     networks:
-      - emerchantpay_network_dev
+      - emerchantpay_network_stage
     volumes:
-      - postgres_data_dev:/var/lib/postgresql/data
+      - postgres_data_stage:/var/lib/postgresql/data
       - ./config/db-init/:/docker-entrypoint-initdb.d/
 
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.1
     command: start-dev --import-realm
     environment:
-      - KEYCLOAK_ADMIN=dev_kc_admin
-      - KEYCLOAK_ADMIN_PASSWORD=dev_kc_password
+      - KEYCLOAK_ADMIN=stage_kc_admin
+      - KEYCLOAK_ADMIN_PASSWORD=stage_kc_password
       - KC_DB=postgres
       - KC_DB_URL_HOST=db
       - KC_DB_URL_PORT=5432
-      - KC_DB_URL_DATABASE=dev_emerchantpay
-      - KC_DB_USERNAME=dev_db_admin
-      - KC_DB_PASSWORD=dev_db_password
+      - KC_DB_URL_DATABASE=stage_emerchantpay
+      - KC_DB_USERNAME=stage_db_admin
+      - KC_DB_PASSWORD=stage_db_password
       - KC_DB_SCHEMA=keycloak
       - KC_HEALTH_ENABLED=true
       - KC_METRICS_ENABLED=true
@@ -35,7 +35,7 @@ services:
     volumes:
       - ./config/keycloak-emerchantpay-realm.json:/opt/keycloak/data/import/keycloak-emerchantpay-realm.json
     networks:
-      - emerchantpay_network_dev
+      - emerchantpay_network_stage
     depends_on:
       - db
 
@@ -45,7 +45,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
-      - emerchantpay_network_dev
+      - emerchantpay_network_stage
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -65,7 +65,7 @@ services:
     ports:
       - "5452:9094"
     networks:
-      - emerchantpay_network_dev
+      - emerchantpay_network_stage
     depends_on:
       - zookeeper
 
@@ -77,13 +77,41 @@ services:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
     networks:
-      - emerchantpay_network_dev
+      - emerchantpay_network_stage
     depends_on:
       - kafka
 
+  merchant-ms:
+    build:
+      context: ./merchant
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - keycloak
+      - kafka
+    networks:
+      - emerchantpay_network_stage
+#    environment:
+
+  transaction-ms:
+    build:
+      context: ./transaction
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+      - keycloak
+      - kafka
+    networks:
+      - emerchantpay_network_stage
+##    environment:
+
 volumes:
-  postgres_data_dev:
+  postgres_data_stage:
 
 networks:
-  emerchantpay_network_dev:
+  emerchantpay_network_stage:
     driver: bridge
