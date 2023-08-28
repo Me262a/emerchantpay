@@ -11,13 +11,13 @@
 - UI: Docker Desktop, Keycloak UI, Kafka UI, Swagger.
 
 ## How to launch:
-###First method. Stage solution. (Full dockerization)
+### First method. Stage solution. (Full dockerization)
 Run docker compose and ensure that all containers are running:
 docker-compose.exe -f docker-compose-stage.yml -p emerchantpay up -d
 
 Note: In Intellij Idea you can right-click on the compose file and click run.
 
-###Second method. Dev solution. (Microservices are not dockerized)
+### Second method. Dev solution. (Microservices are not dockerized)
 Run Postgres, Keycloak, Kafka using docker-compose:
 docker-compose.exe -f docker-compose-dev.yml -p emerchantpay up -d
 
@@ -25,7 +25,7 @@ Run Microservices as spring boot application
 com.vvkozlov.emerchantpay.merchant.MerchantApplication (Merchant folder)
 com.vvkozlov.emerchantpay.transaction.TransactionApplication (Transaction folder)
 
-##How to use
+## How to use
 1. Ensure that all applications are running
 
 2. Get Merchant Admin JWT from keycloak:
