@@ -1,0 +1,1 @@
+ALTER TABLE merchants ALTER COLUMN total_transaction_sum TYPE DECIMAL(20, 2);

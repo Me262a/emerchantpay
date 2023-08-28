@@ -16,6 +16,25 @@ spring:
         jwt:
           jwk-set-uri: http://localhost:5451/realms/emerchantpay/protocol/openid-connect/certs
           #issuer-uri: http://localhost:5451/realms/emerchantpay/.well-known/openid-configuration
+  kafka:
+    bootstrap-servers: localhost:5452
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: merchant_microservice
+      auto-offset-reset: earliest
+      properties:
+        spring:
+          json:
+            use.type.headers: false
+            value:
+              default:
+                type: com.vvkozlov.emerchantpay.merchant.service.model.messagebroker.TransactionMbModel
+            trusted:
+              packages: '*'
 springdoc:
   swagger-ui:
     path: /sw.html
@@ -33,5 +52,7 @@ server:
   port: 8080
 logging:
   level:
-    root: DEBUG
+#    root: DEBUG
+    root: ERROR
+    org.springframework.kafka: ERROR
 #    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

@@ -8,6 +8,7 @@ import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClien
 import com.vvkozlov.emerchantpay.merchant.service.mapper.MerchantMapper;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantEditDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
+import com.vvkozlov.emerchantpay.merchant.service.model.messagebroker.TransactionMbModel;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -107,6 +109,35 @@ public class MerchantService {
         }
     }
 
+    /*
+    *
+    * */
+    @Transactional
+    public OperationResult<MerchantViewDTO> addTransactionToMerchant(TransactionMbModel tranMbModel) {
+        try {
+            Optional<Merchant> existingMerchant = merchantRepository.findByAuthId(tranMbModel.getBelongsTo());
+
+            if (existingMerchant.isPresent()) {
+                Merchant merchantToUpdate = existingMerchant.get();
+                BigDecimal currentSum = merchantToUpdate.getTotalTransactionSum();
+                if (currentSum == null) {
+                    currentSum = BigDecimal.valueOf(0);
+                }
+                BigDecimal newSum = currentSum.add(tranMbModel.getAmount());
+                merchantToUpdate.setTotalTransactionSum(newSum);
+
+                Merchant savedMerchant = merchantRepository.save(merchantToUpdate);
+
+                MerchantViewDTO viewDTO = MerchantMapper.INSTANCE.toDto(savedMerchant);
+                return OperationResult.success(viewDTO);
+            } else {
+                return OperationResult.failure("Merchant not found");
+            }
+        } catch (Exception e) {
+            return OperationResult.failure("An error occurred while updating the merchant's transaction sum: " + e.getMessage());
+        }
+    }
+
     /**
      * Import merchants from fake csv.
      *
@@ -134,7 +165,7 @@ public class MerchantService {
                 merchant.setDescription(record.get("description"));
                 merchant.setEmail(record.get("email"));
                 merchant.setStatus(MerchantStatusEnum.valueOf(record.get("status")));
-                merchant.setTotalTransactionSum(0.0);
+                merchant.setTotalTransactionSum(BigDecimal.valueOf(0));
 
                 //TODO: Adding one user at once is slow, consider some batch process
                 var oAuthCreateUserResult = oAuthServerAdminClient

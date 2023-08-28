@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "merchants")
 @Data
@@ -34,6 +36,6 @@ public class Merchant {
     @Enumerated(EnumType.STRING)
     private MerchantStatusEnum status;
 
-    @Column(name = "total_transaction_sum")
-    private Double totalTransactionSum;
+    @Column(name = "total_transaction_sum", precision = 20, scale = 2)
+    private BigDecimal totalTransactionSum;
 }

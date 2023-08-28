@@ -1,5 +1,6 @@
 package com.vvkozlov.emerchantpay.transaction.domain.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
@@ -20,5 +21,6 @@ import java.math.BigDecimal;
 public abstract class AbstractTransactionWithAmount extends AbstractTransaction {
     @NotNull(message = "Amount cannot be null")
     @DecimalMin(value = "0", inclusive = false, message = "Amount must be greater than 0")
+    @Column(precision = 20, scale = 2)
     private BigDecimal amount;
 }
