@@ -137,12 +137,12 @@ public class AdminController {
             @ApiResponse(responseCode = "500", description = "Server error - check the server log")
     })
     @DeleteMapping("merchant/{merchantId}")
-    public ResponseEntity<Void> removeMerchantById(@PathVariable String merchantId) {
+    public ResponseEntity<List<String>> removeMerchantById(@PathVariable String merchantId) {
         var operationResult = merchantService.removeMerchantById(merchantId);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(operationResult.getErrors());
         }
     }
 
@@ -155,12 +155,13 @@ public class AdminController {
             @ApiResponse(responseCode = "500", description = "Server error - check the server log")
     })
     @DeleteMapping("merchant")
-    public ResponseEntity<Void> removeAllMerchants() {
-        var operationResult = merchantService.removeAllMerchants();
+    public ResponseEntity<List<String>> removeAllMerchants() {
+        //set parameter to true if you want to check that merchants does not have transactions associated
+        var operationResult = merchantService.removeAllMerchants(false);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(operationResult.getErrors());
         }
     }
 }

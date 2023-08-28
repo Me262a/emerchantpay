@@ -54,6 +54,11 @@ public class TransactionService {
         return OperationResult.success(new PageImpl<>(viewDTOs, pageable, transactions.getTotalElements()));
     }
 
+    @Transactional(readOnly = true)
+    public boolean transactionsExistForMerchant(final String merchantId) {
+        return transactionRepository.countByBelongsTo(merchantId) > 0;
+    }
+
     @Transactional
     public OperationResult<TransactionViewDTO> processTransaction(final AbstractTransactionCreateDTO createDto) {
         @SuppressWarnings("unchecked") //this is a fast workaround - avoid in real application

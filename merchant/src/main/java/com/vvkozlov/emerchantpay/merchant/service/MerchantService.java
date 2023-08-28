@@ -6,6 +6,7 @@ import com.vvkozlov.emerchantpay.merchant.domain.entities.Merchant;
 import com.vvkozlov.emerchantpay.merchant.infra.repository.MerchantRepository;
 import com.vvkozlov.emerchantpay.merchant.service.contract.MessageBrokerProducer;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
+import com.vvkozlov.emerchantpay.merchant.service.contract.TransactionMsClient;
 import com.vvkozlov.emerchantpay.merchant.service.mapper.MerchantMapper;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantEditDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
@@ -39,11 +40,14 @@ public class MerchantService {
     private final OAuthServerAdminClient oAuthServerAdminClient;
     private final MessageBrokerProducer mbProducer;
 
+    private final TransactionMsClient transactionMsClient;
+
     @Autowired
-    public MerchantService(MerchantRepository merchantRepository, OAuthServerAdminClient oAuthServerAdminClient, MessageBrokerProducer mbProducer) {
+    public MerchantService(MerchantRepository merchantRepository, OAuthServerAdminClient oAuthServerAdminClient, MessageBrokerProducer mbProducer, TransactionMsClient transactionMsClient) {
         this.merchantRepository = merchantRepository;
         this.oAuthServerAdminClient = oAuthServerAdminClient;
         this.mbProducer = mbProducer;
+        this.transactionMsClient = transactionMsClient;
     }
 
     /**
@@ -196,29 +200,56 @@ public class MerchantService {
         }
     }
 
+    /**
+     * Remove merchant by authid.
+     *
+     * @param merchantId the auth id of merchant
+     * @return the operation result
+     */
     @Transactional
-    public OperationResult<Void> removeMerchantById(final String userId) {
+    public OperationResult<Void> removeMerchantById(final String merchantId) {
         try {
-            oAuthServerAdminClient.removeMerchantById(userId);
-            merchantRepository.deleteByAuthId(userId);
+            OperationResult<Boolean> hasTransactionsResult = transactionMsClient.getDoesMerchantHaveTransactions(merchantId);
+            if (hasTransactionsResult.isSuccess() && hasTransactionsResult.getResult()) {
+                return OperationResult.failure("Cannot remove merchant. Active transactions exist for the user.");
+            }
+
+            oAuthServerAdminClient.removeMerchantById(merchantId);
+            merchantRepository.deleteByAuthId(merchantId);
             return OperationResult.success(null);
         } catch (Exception e) {
             return OperationResult.failure("An error occurred while removing the user: " + e.getMessage());
         }
     }
 
+    /**
+     * Remove all merchants both in db and on auth server.
+     *
+     * @param checkForActiveTransactions whether to check for active transactions.
+     * If there are transactions for merchant, do nnot remove.
+     * @return the operation result with the list of removed merchant auth ids
+     */
     @Transactional
-    public OperationResult<List<String>> removeAllMerchants() {
+    public OperationResult<List<String>> removeAllMerchants(boolean checkForActiveTransactions) {
         final String roleName = UserRoles.ROLE_MERCHANT;
         try {
+            if (checkForActiveTransactions) {
+                List<Merchant> allMerchants = merchantRepository.findAll();
+                for (Merchant merchant : allMerchants) {
+                    OperationResult<Boolean> hasTransactionsResult = transactionMsClient.getDoesMerchantHaveTransactions(merchant.getAuthId());
+                    if (hasTransactionsResult.isSuccess() && hasTransactionsResult.getResult()) {
+                        return OperationResult.failure("Cannot remove all merchants. Active transactions exist for at least one merchant.");
+                    }
+                }
+            }
+
             OperationResult<List<String>> userIdsToRemoveResult = oAuthServerAdminClient.removeAllUsersWithRole(roleName);
             if (userIdsToRemoveResult.isSuccess()) {
-                merchantRepository.deleteAllInBatch();
+                merchantRepository.deleteAllInBatch(); // for simplicity just cleanup the table
                 return userIdsToRemoveResult;
             } else {
                 return OperationResult.failure("Failed to remove users by role:" + roleName);
             }
-
         } catch (Exception e) {
             return OperationResult.failure("An error occurred while removing users by role: " + e.getMessage());
         }

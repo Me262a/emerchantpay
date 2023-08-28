@@ -25,9 +25,12 @@ public class OAuth2SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		//Enable unauthorized access to swagger and protect everything else
+		//Enable unauthorized access to swagger and for microservice integration
+        //In real app microservice integration should also be protected
+        //Protect everything else
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/sw.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                .requestMatchers("/api/transaction/checkByMerchant/*").permitAll()
                 .anyRequest().authenticated()
         );
 		//Set up oauth resource server

@@ -3,7 +3,7 @@ package com.vvkozlov.emerchantpay.transaction.service.validator;
 import com.vvkozlov.emerchantpay.transaction.domain.constants.TransactionStatusEnum;
 import com.vvkozlov.emerchantpay.transaction.domain.entities.AbstractTransaction;
 import com.vvkozlov.emerchantpay.transaction.domain.entities.AbstractTransactionWithAmount;
-import com.vvkozlov.emerchantpay.transaction.infra.web.MerchantClientService;
+import com.vvkozlov.emerchantpay.transaction.service.contract.MerchantMsClient;
 import com.vvkozlov.emerchantpay.transaction.service.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public abstract class AbstractTransactionValidator<T, K extends AbstractTransaction> {
 
     @Autowired
-    MerchantClientService merchantClientService;
+    MerchantMsClient merchantMsClient;
 
     //TODO: Use some standard library to check email
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -32,7 +32,7 @@ public abstract class AbstractTransactionValidator<T, K extends AbstractTransact
     }
 
     protected void validateIsMerchantActive(AbstractTransaction transaction, ValidationResults results) {
-        OperationResult<Boolean> statusResult = merchantClientService.getIsMerchantActive(transaction.getBelongsTo());
+        OperationResult<Boolean> statusResult = merchantMsClient.getIsMerchantActive(transaction.getBelongsTo());
         if (!statusResult.isSuccess()) {
             results.addError("Cannot retrieve merchant status");
         } else {

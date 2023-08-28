@@ -48,6 +48,11 @@ keycloak-admin:
   clientSecret:
   username: dev_kc_admin
   password: dev_kc_password
+webclient:
+  transaction:
+    connect-timeout: 2000
+    read-timeout: 2000
+    base-url: http://localhost:8081
 server:
   port: 8080
 logging:

@@ -17,4 +17,5 @@ public interface TransactionRepository extends JpaRepository<AbstractTransaction
     @Modifying
     @Transactional
     void deleteByDateCreatedBefore(Date date);
+    long countByBelongsTo(String merchantId);
 }

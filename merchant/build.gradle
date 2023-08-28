@@ -40,6 +40,7 @@ dependencies {
     implementation 'org.keycloak:keycloak-admin-client:22.0.1'
     implementation 'org.keycloak:keycloak-spring-boot-starter:22.0.1'
     implementation 'org.keycloak:keycloak-policy-enforcer:22.0.1'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'

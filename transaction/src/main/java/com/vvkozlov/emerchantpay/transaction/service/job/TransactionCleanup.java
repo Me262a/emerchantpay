@@ -18,7 +18,7 @@ public class TransactionCleanup {
         this.transactionRepository = transactionRepository;
     }
 
-    @Scheduled(cron = "* * * * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
     public void deleteOldTransactions() {
         if (isRunning.getAndSet(true)) {
             System.out.println("Transaction cleanup is already running. Skipping execution.");

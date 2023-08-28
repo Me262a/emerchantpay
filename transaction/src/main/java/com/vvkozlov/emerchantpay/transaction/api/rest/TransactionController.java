@@ -31,7 +31,7 @@ public class TransactionController {
 
     @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid. " +
             "Any transaction, any role, not restricted to current user yet")
-    @GetMapping("/{uuid}")
+    @GetMapping("/transaction/{uuid}")
     public ResponseEntity<TransactionViewDTO> getTransaction(@PathVariable UUID uuid) {
         var operationResult = transactionService.getTransaction(uuid);
         if (operationResult.isSuccess()) {
@@ -44,7 +44,7 @@ public class TransactionController {
     @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid. " +
             "All transactions on the server, any role, not restricted to current user yet")
     @GetMapping("/all")
-    public ResponseEntity<Page<TransactionViewDTO>> getTransactions(Pageable pageable) {
+    public ResponseEntity<Page<TransactionViewDTO>> getAllTransactions(Pageable pageable) {
         var operationResult = transactionService.getTransactions(pageable);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
@@ -52,6 +52,16 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @Operation(summary = "Checks if specified merchant id has related transactions",
+            description = "Returns a boolean of check result. " +
+            "Protection for this method to be added for real application")
+    @GetMapping("/checkByMerchant/{belongsTo}")
+    public ResponseEntity<Boolean> hasTransactionsForMerchant(@PathVariable String belongsTo) {
+        boolean hasTransactions = transactionService.transactionsExistForMerchant(belongsTo);
+        return ResponseEntity.ok(hasTransactions);
+    }
+
     @Operation(summary = "Creates auth transaction.", description = "Restricted to merchant role.")
     @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
     @PostMapping("/authorize")
