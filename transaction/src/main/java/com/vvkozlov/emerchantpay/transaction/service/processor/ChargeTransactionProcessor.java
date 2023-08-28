@@ -1,6 +1,5 @@
 package com.vvkozlov.emerchantpay.transaction.service.processor;
 
-import com.vvkozlov.emerchantpay.transaction.domain.constants.TransactionStatusEnum;
 import com.vvkozlov.emerchantpay.transaction.domain.entities.AbstractTransaction;
 import com.vvkozlov.emerchantpay.transaction.domain.entities.AuthorizeTransaction;
 import com.vvkozlov.emerchantpay.transaction.domain.entities.ChargeTransaction;
@@ -10,7 +9,6 @@ import com.vvkozlov.emerchantpay.transaction.service.mapper.TransactionMapper;
 import com.vvkozlov.emerchantpay.transaction.service.model.ChargeTransactionCreateDTO;
 import com.vvkozlov.emerchantpay.transaction.service.validator.ChargeTransactionValidator;
 import com.vvkozlov.emerchantpay.transaction.service.validator.ValidationResults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

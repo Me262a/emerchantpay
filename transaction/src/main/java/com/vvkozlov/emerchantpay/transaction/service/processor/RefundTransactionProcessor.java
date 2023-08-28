@@ -10,7 +10,6 @@ import com.vvkozlov.emerchantpay.transaction.service.mapper.TransactionMapper;
 import com.vvkozlov.emerchantpay.transaction.service.model.RefundTransactionCreateDTO;
 import com.vvkozlov.emerchantpay.transaction.service.validator.RefundTransactionValidator;
 import com.vvkozlov.emerchantpay.transaction.service.validator.ValidationResults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 @Service
 public class RefundTransactionProcessor extends AbstractTransactionProcessor<RefundTransactionCreateDTO, RefundTransaction> {

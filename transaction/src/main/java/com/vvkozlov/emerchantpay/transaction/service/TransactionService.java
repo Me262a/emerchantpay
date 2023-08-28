@@ -9,14 +9,11 @@ import com.vvkozlov.emerchantpay.transaction.service.processor.TransactionProces
 import com.vvkozlov.emerchantpay.transaction.service.processor.TransactionProcessorFactory;
 import com.vvkozlov.emerchantpay.transaction.service.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 import java.util.UUID;

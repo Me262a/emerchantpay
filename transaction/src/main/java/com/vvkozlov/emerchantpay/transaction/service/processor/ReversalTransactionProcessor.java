@@ -1,7 +1,9 @@
 package com.vvkozlov.emerchantpay.transaction.service.processor;
 
 import com.vvkozlov.emerchantpay.transaction.domain.constants.TransactionStatusEnum;
-import com.vvkozlov.emerchantpay.transaction.domain.entities.*;
+import com.vvkozlov.emerchantpay.transaction.domain.entities.AbstractTransaction;
+import com.vvkozlov.emerchantpay.transaction.domain.entities.AuthorizeTransaction;
+import com.vvkozlov.emerchantpay.transaction.domain.entities.ReversalTransaction;
 import com.vvkozlov.emerchantpay.transaction.infra.repository.TransactionRepository;
 import com.vvkozlov.emerchantpay.transaction.service.mapper.TransactionMapper;
 import com.vvkozlov.emerchantpay.transaction.service.model.ReversalTransactionCreateDTO;

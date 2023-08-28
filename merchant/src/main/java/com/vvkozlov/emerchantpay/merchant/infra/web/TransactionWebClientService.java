@@ -2,10 +2,8 @@ package com.vvkozlov.emerchantpay.merchant.infra.web;
 
 import com.vvkozlov.emerchantpay.merchant.service.contract.TransactionMsClient;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 @Service
 public class TransactionWebClientService implements TransactionMsClient {

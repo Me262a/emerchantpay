@@ -11,8 +11,6 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
-
-
 import java.util.UUID;
 
 @Entity
