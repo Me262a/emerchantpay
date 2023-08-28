@@ -1,6 +1,6 @@
 # Payment System Task
 ## Components and tech stack
-- Java 17, spring boot 3.1.2, gradle, checkstyle
+- Java 17, spring boot 3.1.3, gradle, checkstyle
 - Merchant Microservice to manage Users
 - Transaction Microservice to manage Transactions
 - Postgres 15 as DB
@@ -78,6 +78,7 @@ Note: Kafka has following Events:
 1. Amount is charged (transaction topic)
 2. Amount is refunded (transaction topic)
 3. Merchant Status is changed (merchant topic)
+You can check them in ms container logs or Kafka UI 
 
 Useful links:
 1. Keycloak Admin UI:
