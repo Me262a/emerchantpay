@@ -2,9 +2,7 @@ package com.vvkozlov.emerchantpay.merchant.infra.kafka;
 
 import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
 import com.vvkozlov.emerchantpay.merchant.service.contract.MessageBrokerConsumer;
-import com.vvkozlov.emerchantpay.merchant.service.model.messagebroker.MerchantMbModel;
 import com.vvkozlov.emerchantpay.merchant.service.model.messagebroker.TransactionMbModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +16,7 @@ public class KafkaConsumer implements MessageBrokerConsumer {
 
     @KafkaListener(topics = "transaction_topic", groupId = "merchant_microservice")
     public TransactionMbModel consumeMessage(TransactionMbModel transactionInfo) {
-        merchantService.addTransactionToMerchant(transactionInfo);
+        merchantService.addTransactionAmountToMerchant(transactionInfo);
 
         System.out.println("Received merchant with ID: "
                 + transactionInfo.getBelongsTo() + " and state: " + transactionInfo.getAmount());

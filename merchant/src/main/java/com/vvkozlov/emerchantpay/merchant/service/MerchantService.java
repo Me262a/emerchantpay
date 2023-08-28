@@ -4,6 +4,7 @@ import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
 import com.vvkozlov.emerchantpay.merchant.domain.constants.UserRoles;
 import com.vvkozlov.emerchantpay.merchant.domain.entities.Merchant;
 import com.vvkozlov.emerchantpay.merchant.infra.repository.MerchantRepository;
+import com.vvkozlov.emerchantpay.merchant.service.contract.MessageBrokerProducer;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
 import com.vvkozlov.emerchantpay.merchant.service.mapper.MerchantMapper;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantEditDTO;
@@ -36,11 +37,13 @@ import java.util.stream.Collectors;
 public class MerchantService {
     private final MerchantRepository merchantRepository;
     private final OAuthServerAdminClient oAuthServerAdminClient;
+    private final MessageBrokerProducer mbProducer;
 
     @Autowired
-    public MerchantService(MerchantRepository merchantRepository, OAuthServerAdminClient oAuthServerAdminClient) {
+    public MerchantService(MerchantRepository merchantRepository, OAuthServerAdminClient oAuthServerAdminClient, MessageBrokerProducer mbProducer) {
         this.merchantRepository = merchantRepository;
         this.oAuthServerAdminClient = oAuthServerAdminClient;
+        this.mbProducer = mbProducer;
     }
 
     /**
@@ -91,6 +94,7 @@ public class MerchantService {
             if (existingMerchant.isPresent()) {
                 Merchant merchantToUpdate = existingMerchant.get();
                 Merchant updatedMerchant = MerchantMapper.INSTANCE.toEntity(dto);
+                boolean isStatusChanged = !merchantToUpdate.getStatus().equals(updatedMerchant.getStatus());
 
                 merchantToUpdate.setName(updatedMerchant.getName());
                 merchantToUpdate.setDescription(updatedMerchant.getDescription());
@@ -98,6 +102,11 @@ public class MerchantService {
                 merchantToUpdate.setStatus(updatedMerchant.getStatus());
 
                 Merchant savedMerchant = merchantRepository.save(merchantToUpdate);
+
+                if (isStatusChanged) {
+                    boolean isActive = savedMerchant.getStatus() == MerchantStatusEnum.ACTIVE;
+                    mbProducer.sendMessage(savedMerchant.getAuthId(), isActive);
+                }
 
                 MerchantViewDTO viewDTO = MerchantMapper.INSTANCE.toDto(savedMerchant);
                 return OperationResult.success(viewDTO);
@@ -113,7 +122,7 @@ public class MerchantService {
     *
     * */
     @Transactional
-    public OperationResult<MerchantViewDTO> addTransactionToMerchant(TransactionMbModel tranMbModel) {
+    public OperationResult<MerchantViewDTO> addTransactionAmountToMerchant(TransactionMbModel tranMbModel) {
         try {
             Optional<Merchant> existingMerchant = merchantRepository.findByAuthId(tranMbModel.getBelongsTo());
 

@@ -11,6 +11,9 @@ public class KafkaConsumer implements MessageBrokerConsumer {
     public MerchantMbModel consumeMessage(MerchantMbModel merchantInfo) {
         System.out.println("Received merchant with ID: "
                 + merchantInfo.getId() + " and state: " + merchantInfo.isActive());
+
+        //Do smth - Handle merchant transactions in this case
+
         return merchantInfo;
     }
 }

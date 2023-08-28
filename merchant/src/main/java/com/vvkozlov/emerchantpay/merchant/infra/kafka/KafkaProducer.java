@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaProducer implements MessageBrokerProducer {
 
-    @Autowired
-    private KafkaTemplate<String, MerchantMbModel> kafkaTemplate;
+    private final KafkaTemplate<String, MerchantMbModel> kafkaTemplate;
+
+    public KafkaProducer(KafkaTemplate<String, MerchantMbModel> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     public void sendMessage(String id, boolean isActive) {
         MerchantMbModel transaction = new MerchantMbModel(id, isActive);
