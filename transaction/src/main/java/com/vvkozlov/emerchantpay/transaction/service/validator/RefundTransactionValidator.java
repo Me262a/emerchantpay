@@ -17,7 +17,8 @@ public class RefundTransactionValidator extends AbstractTransactionValidator<Ref
         //check referenced transaction
         validateIsSameMerchant(transaction, referencedTransaction, results);
         validateIsTransactionAmountNotGreaterThanReferenced(transaction, referencedTransaction, results);
-        validateIsTransactionApproved(referencedTransaction, results);
+        //This rule was not specified in the tasks, but it would be good to have
+        //validateIsTransactionApproved(referencedTransaction, results);
 
         return results;
     }

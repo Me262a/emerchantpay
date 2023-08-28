@@ -53,7 +53,7 @@ public abstract class AbstractTransactionValidator<T, K extends AbstractTransact
 
     protected void validateIsTransactionApproved(AbstractTransaction transaction, ValidationResults results) {
         if (transaction.getStatus() != TransactionStatusEnum.APPROVED) {
-            results.addError("Referenced transaction is not approved");
+            results.addError("Referenced transaction is not in 'Approved' state");
         }
     }
 

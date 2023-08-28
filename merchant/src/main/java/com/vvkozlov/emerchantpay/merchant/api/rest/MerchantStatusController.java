@@ -33,7 +33,7 @@ public class MerchantStatusController {
             @ApiResponse(responseCode = "404", description = "The merchant was not found")
     })
     @GetMapping("status/{uuid}")
-    public ResponseEntity<Boolean> getMerchant(@PathVariable String uuid) {
+    public ResponseEntity<Boolean> getIsMerchantActive(@PathVariable String uuid) {
         var operationResult = merchantService.getMerchant(uuid);
         if (operationResult.isSuccess()) {
             boolean isActive = operationResult.getResult().getStatus() == MerchantStatusEnum.ACTIVE;

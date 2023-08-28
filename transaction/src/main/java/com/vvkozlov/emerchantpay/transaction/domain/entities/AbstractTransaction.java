@@ -6,7 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.util.Date;
+
 
 import java.util.UUID;
 
@@ -33,4 +38,13 @@ public abstract class AbstractTransaction {
     private String customerEmail;
     @Column(name = "customer_phone")
     private String customerPhone;
+
+    @CreationTimestamp(source = SourceType.DB)
+    @Column(name = "date_created", nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateCreated;
+    @UpdateTimestamp(source = SourceType.DB)
+    @Column(name = "date_modified")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateModified;
 }
