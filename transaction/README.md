@@ -1,3 +1,3 @@
-# Merchant microservice app
+# Transaction microservice app
 
-This module represents app that allows to manage merchants for the payment system.
+This module represents app that allows to manage merchant transactions for the payment system.
