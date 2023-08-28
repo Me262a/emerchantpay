@@ -18,23 +18,31 @@ public interface TransactionMapper {
 
     @Mapping(target = "uuid", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "dateModified", ignore = true)
     AuthorizeTransaction toEntity(AuthorizeTransactionCreateDTO dto);
 
     @Mapping(target = "uuid", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "customerEmail", ignore = true)
     @Mapping(target = "customerPhone", ignore = true)
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "dateModified", ignore = true)
     ChargeTransaction toEntity(ChargeTransactionCreateDTO dto);
 
     @Mapping(target = "uuid", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "customerEmail", ignore = true)
     @Mapping(target = "customerPhone", ignore = true)
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "dateModified", ignore = true)
     RefundTransaction toEntity(RefundTransactionCreateDTO dto);
 
     @Mapping(target = "uuid", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "customerEmail", ignore = true)
     @Mapping(target = "customerPhone", ignore = true)
+    @Mapping(target = "dateCreated", ignore = true)
+    @Mapping(target = "dateModified", ignore = true)
     ReversalTransaction toEntity(ReversalTransactionCreateDTO dto);
 }
