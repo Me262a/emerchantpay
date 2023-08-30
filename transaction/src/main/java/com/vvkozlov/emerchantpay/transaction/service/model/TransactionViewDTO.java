@@ -24,4 +24,5 @@ public class TransactionViewDTO {
     private String customerEmail;
     private String customerPhone;
     private BigDecimal amount;
+    private String transactionType;
 }

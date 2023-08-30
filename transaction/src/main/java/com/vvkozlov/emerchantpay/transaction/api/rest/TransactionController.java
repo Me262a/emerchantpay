@@ -3,6 +3,7 @@ package com.vvkozlov.emerchantpay.transaction.api.rest;
 import com.vvkozlov.emerchantpay.transaction.service.TransactionService;
 import com.vvkozlov.emerchantpay.transaction.service.model.*;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,7 @@ public class TransactionController {
 
     @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid. " +
             "Any transaction, any role, not restricted to current user yet")
-    @GetMapping("/transaction/{uuid}")
+    @GetMapping("/single/{uuid}")
     public ResponseEntity<TransactionViewDTO> getTransaction(@PathVariable UUID uuid) {
         var operationResult = transactionService.getTransaction(uuid);
         if (operationResult.isSuccess()) {
@@ -43,8 +44,13 @@ public class TransactionController {
 
     @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid. " +
             "All transactions on the server, any role, not restricted to current user yet")
-    @GetMapping("/all")
-    public ResponseEntity<Page<TransactionViewDTO>> getAllTransactions(Pageable pageable) {
+    @GetMapping("all")
+    public ResponseEntity<Page<TransactionViewDTO>> getTransactions(
+            @Parameter(hidden = true) Pageable pageable,
+            @Parameter(name = "page", example = "0", description = "Page number") int page,
+            @Parameter(name = "size", example = "10", description = "Items per page") int size,
+            @Parameter(name = "sort", example = "name,asc", description = "Sorting criteria") String sort
+    ) {
         var operationResult = transactionService.getTransactions(pageable);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
