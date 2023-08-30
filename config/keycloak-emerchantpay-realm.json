@@ -44,11 +44,11 @@
       "attributes": {
         "access.token.lifespan": "43200"
       },
-      "bearerOnly": true,
+      "bearerOnly": false,
       "serviceAccountsEnabled": true,
       "secret": "emerchantpay_test_client_secret",
-      "authorizationServicesEnabled": false,
-      "directAccessGrantsEnabled": false,
+      "authorizationServicesEnabled": true,
+      "directAccessGrantsEnabled": true,
       "fullScopeAllowed": true,
       "protocolMappers": [
         {
