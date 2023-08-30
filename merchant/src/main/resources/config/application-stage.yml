@@ -11,6 +11,9 @@ spring:
   flyway:
     schemas: merchant
   security:
+    cors:
+      allowed-origins: http://localhost:8080
+      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
     oauth2:
       resourceserver:
         jwt:
@@ -52,7 +55,7 @@ webclient:
   transaction:
     connect-timeout: 2000
     read-timeout: 2000
-    base-url: http://transaction-ms:8080
+    base-url: http://transaction-ms:8082
 server:
   port: 8080
 logging:

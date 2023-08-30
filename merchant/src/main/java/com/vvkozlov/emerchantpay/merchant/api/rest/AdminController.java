@@ -36,14 +36,14 @@ public class AdminController {
         this.merchantService = merchantService;
     }
 
-    @Operation(summary = "Get a merchant by uuid", description = "Returns a merchant data as per the uuid.")
+    @Operation(summary = "Get a merchant by id", description = "Returns a merchant data as per the id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "The merchant was not found")
     })
-    @GetMapping("merchant/{uuid}")
-    public ResponseEntity<MerchantViewDTO> getMerchant(@PathVariable String uuid) {
-        var operationResult = merchantService.getMerchant(uuid);
+    @GetMapping("merchant/{id}")
+    public ResponseEntity<MerchantViewDTO> getMerchant(@PathVariable String id) {
+        var operationResult = merchantService.getMerchant(id);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
         } else {
@@ -75,16 +75,16 @@ public class AdminController {
     }
 
     @Operation(
-            summary = "Update a merchant data by uuid",
+            summary = "Update a merchant data by id",
             description = "Update a merchant. Returns an updated merchant data."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "500", description = "Server error - check the server log")
     })
-    @PutMapping("merchant/{uuid}")
-    public ResponseEntity<MerchantViewDTO> updateMerchant(@PathVariable String uuid, @RequestBody MerchantEditDTO dto) {
-        var operationResult = merchantService.updateMerchant(uuid, dto);
+    @PutMapping("merchant/{id}")
+    public ResponseEntity<MerchantViewDTO> updateMerchant(@PathVariable String id, @RequestBody MerchantEditDTO dto) {
+        var operationResult = merchantService.updateMerchant(id, dto);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
         } else {
@@ -136,9 +136,9 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Successfully removed the merchant"),
             @ApiResponse(responseCode = "500", description = "Server error - check the server log")
     })
-    @DeleteMapping("merchant/{merchantId}")
-    public ResponseEntity<List<String>> removeMerchantById(@PathVariable String merchantId) {
-        var operationResult = merchantService.removeMerchantById(merchantId);
+    @DeleteMapping("merchant/{id}")
+    public ResponseEntity<List<String>> removeMerchantById(@PathVariable String id) {
+        var operationResult = merchantService.removeMerchantById(id);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok().build();
         } else {

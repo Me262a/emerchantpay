@@ -79,7 +79,7 @@ public class MerchantResourceServerTest {
 				"emerchantpay-test",
 				username,
 				password,
-				"emerchantpay-client",
+				"emerchantpay-test-client",
 				"emerchantpay_client_secret");
 		return keycloak.tokenManager().getAccessTokenString();
 	}

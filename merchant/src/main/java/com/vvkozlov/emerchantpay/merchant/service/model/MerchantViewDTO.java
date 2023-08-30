@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
+
 /**
  * Use this DTO to view merchant data (get)
  */
@@ -17,5 +19,5 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class MerchantViewDTO extends BaseUserViewDTO {
     private MerchantStatusEnum status;
-    private Double totalTransactionSum;
+    private BigDecimal totalTransactionSum;
 }

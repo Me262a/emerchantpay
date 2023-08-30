@@ -38,22 +38,17 @@
   },
   "clients": [
     {
-      "clientId": "emerchantpay-client",
+      "clientId": "emerchantpay-test-client",
       "enabled": true,
       "protocol": "openid-connect",
       "attributes": {
         "access.token.lifespan": "43200"
       },
-      "baseUrl": "http://localhost:8080",
-      "adminUrl": "http://localhost:8080",
-      "bearerOnly": false,
-      "redirectUris": [
-        "http://localhost:8080/*",
-        "http://127.0.0.1:8080/*"
-      ],
-      "secret": "emerchantpay_client_secret",
-      "authorizationServicesEnabled": true,
-      "directAccessGrantsEnabled": true,
+      "bearerOnly": true,
+      "serviceAccountsEnabled": true,
+      "secret": "emerchantpay_test_client_secret",
+      "authorizationServicesEnabled": false,
+      "directAccessGrantsEnabled": false,
       "fullScopeAllowed": true,
       "protocolMappers": [
         {
