@@ -1,0 +1,8 @@
+{
+  "realm": "emerchantpay",
+  "auth-server-url": "http://localhost:5451/",
+  "ssl-required": "external",
+  "resource": "emerchantpay-web-client",
+  "public-client": true,
+  "confidential-port": 0
+}
