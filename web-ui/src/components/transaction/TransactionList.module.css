@@ -1,0 +1,19 @@
+.transaction-authorize {
+    background-color: blue;
+}
+
+.transaction-charge {
+    background-color: green;
+}
+
+.transaction-refund {
+    background-color: purple;
+}
+
+.transaction-reverse {
+    background-color: orange;
+}
+
+.transaction-error {
+    background-color: red;
+}

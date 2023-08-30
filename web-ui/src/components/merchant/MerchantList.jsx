@@ -10,7 +10,7 @@ const MerchantList = () => {
   const totalPages = merchantPage ? merchantPage.totalPages : 0;
 
   // Pagination state
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const size = 10;
   const sort = 'id';
 
@@ -36,7 +36,7 @@ const MerchantList = () => {
   useEffect(() => {
     if (!merchantPage) {
       dispatch(getMerchantsPage(page, size, sort));
-    } else if (!merchants.length && page > 1) {
+    } else if (!merchants.length && page > 0) {
       // If no merchants on this page(after delete?) and not the first page, navigate to previous page
       setPage(prev => prev - 1);
     }
@@ -90,12 +90,12 @@ const MerchantList = () => {
             </tbody>
           </table>
           <div className="d-flex justify-content-between">
-            <button className="btn btn-outline-primary" onClick={() => setPage(prev => Math.max(prev - 1, 1))}>
+            <button className="btn btn-outline-primary" onClick={() => setPage(prev => Math.max(prev - 1, 0))}>
               Previous
             </button>
-            <span className="align-self-center">Page: {page}</span>
+            <span className="align-self-center">Page: {page + 1}</span>
             <button
-                className={`btn btn-outline-primary ${page >= totalPages-1 ? 'invisible' : ''}`}
+                className={`btn btn-outline-primary ${page >= totalPages - 1 ? 'invisible' : ''}`}
                 onClick={() => setPage(prev => prev + 1)}
             >
               Next

@@ -2,7 +2,7 @@ import CommonUserViewModel from "./CommonUserViewModel";
 
 class MerchantViewModel extends CommonUserViewModel {
     constructor(id, name, description, email, status, totalTransactionSum) {
-        super(id, name, description, email);  // call the parent constructor
+        super(id, name, description, email);
         this.status = status;
         this.totalTransactionSum = totalTransactionSum;
     }

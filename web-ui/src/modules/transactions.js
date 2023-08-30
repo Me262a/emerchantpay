@@ -1,4 +1,4 @@
-import { SUCCESS_SUFFIX } from "redux-axios-middleware";
+import { SUCCESS_SUFFIX, ERROR_SUFFIX  } from "redux-axios-middleware";
 import UserService from "../services/UserService";
 import {MICROSERVICE_TRANSACTION} from "../AppConstants";
 
@@ -6,13 +6,45 @@ const GET_TRANSACTION = 'GET_TRANSACTION';
 const LIST_TRANSACTIONS = 'LIST_TRANSACTIONS';
 const ADD_TRANSACTION = 'ADD_TRANSACTION';
 
-const transactions = (state = [], action) => {
+const initialState = {
+  transactionList: null,
+  currentTransactionDetails: null,
+  transactionPage: null,
+  serverErrors: null
+};
+
+const transactions = (state = initialState, action) => {
   switch (action.type) {
     case LIST_TRANSACTIONS + SUCCESS_SUFFIX:
-      return action.payload.data;
+      const data = action.payload.data;
+      const transactionPage = {
+        content: data.content,
+        totalPages: data.totalPages,
+        currentPage: data.number,
+      };
+      return {
+        ...state,
+        transactionPage: transactionPage,
+        transactionList: data.content
+      };
 
-    case ADD_TRANSACTION:
-      return state.filter((transaction) => transaction.id !== action.payload.transaction.id);
+    case GET_TRANSACTION + SUCCESS_SUFFIX:
+      return {
+        ...state,
+        currentTransactionDetails: action.payload.data
+      };
+
+    case ADD_TRANSACTION + SUCCESS_SUFFIX:
+      return {
+        ...state,
+        currentTransactionDetails: action.payload.data
+      };
+
+    case ADD_TRANSACTION + ERROR_SUFFIX:
+      return {
+        ...state,
+        serverErrors: action.payload.response.data
+      };
 
     default:
       return state;
@@ -21,39 +53,84 @@ const transactions = (state = [], action) => {
 
 export default transactions;
 
-export const getTransaction = id => {
-  console.log(`${UserService.getUsername()} gets the transaction ${id}`);
+export const getTransaction = (uuid) => {
+  console.log(`${UserService.getUsername()} gets the transaction ${uuid}`);
   return {
     type: GET_TRANSACTION,
     microservice: MICROSERVICE_TRANSACTION,
     payload: {
-      id,
       request: {
-        url: `/demo/transactions/${id}`,
+        url: `/single/${uuid}`,
         method: 'GET',
       },
     },
   }
 };
 
-export const allTransactions = () => ({
+export const getTransactionsPage = (page, size, sort) => ({
   type: LIST_TRANSACTIONS,
   microservice: MICROSERVICE_TRANSACTION,
   payload: {
     request: {
-      url: '/demo/transactions',
+      url: `all?page=${page}&size=${size}&sort=${sort}`,
+      method: 'GET',
     },
   },
 });
 
-export const addAuthorizeTransaction = transaction => {
-  console.log(`${UserService.getUsername()} added the authorize transaction ${transaction.title}`);
+export const addAuthorizeTransaction = (transaction) => {
+  console.log(`${UserService.getUsername()} added the authorize transaction for customer ${transaction.email}`);
   return {
     type: ADD_TRANSACTION,
     microservice: MICROSERVICE_TRANSACTION,
     payload: {
       request: {
-        url: '/demo/transactions',
+        url: '/authorize',
+        method: 'POST',
+        data: transaction,
+      },
+    },
+  }
+};
+
+export const addChargeTransaction = (transaction) => {
+  console.log(`${UserService.getUsername()} added the charge transaction refId=${transaction.referenceId}`);
+  return {
+    type: ADD_TRANSACTION,
+    microservice: MICROSERVICE_TRANSACTION,
+    payload: {
+      request: {
+        url: '/charge',
+        method: 'POST',
+        data: transaction,
+      },
+    },
+  }
+};
+
+export const addRefundTransaction = (transaction) => {
+  console.log(`${UserService.getUsername()} added the refund transaction refId=${transaction.referenceId}`);
+  return {
+    type: ADD_TRANSACTION,
+    microservice: MICROSERVICE_TRANSACTION,
+    payload: {
+      request: {
+        url: '/refund',
+        method: 'POST',
+        data: transaction,
+      },
+    },
+  }
+};
+
+export const addReversalTransaction = (transaction) => {
+  console.log(`${UserService.getUsername()} added the reversal transaction refId=${transaction.referenceId}`);
+  return {
+    type: ADD_TRANSACTION,
+    microservice: MICROSERVICE_TRANSACTION,
+    payload: {
+      request: {
+        url: '/reversal',
         method: 'POST',
         data: transaction,
       },

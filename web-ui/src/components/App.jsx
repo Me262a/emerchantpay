@@ -6,6 +6,7 @@ import RenderOnAnonymous from "./renders/RenderOnAnonymous";
 import Merchants from "./merchant/Merchants";
 import Transactions from "./transaction/Transactions";
 import NoPermissions from "./renders/NoPermissions";
+import {ToastContainer} from "react-toastify";
 
 const App = ({store}) => (
   <Provider store={store}>
@@ -22,6 +23,7 @@ const App = ({store}) => (
         </RenderOnAuthenticated>
         <NoPermissions/>
       </div>
+      <ToastContainer />
     </BrowserRouter>
   </Provider>
 );

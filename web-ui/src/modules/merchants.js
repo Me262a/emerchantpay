@@ -12,7 +12,13 @@ const IMPORT_ADMINS = 'IMPORT_ADMINS';
 const DELETE_MERCHANT = 'DELETE_MERCHANT';
 const DELETE_ALL_MERCHANTS = 'DELETE_ALL_MERCHANTS';
 
-const merchants = (state = {}, action) => {
+const initialState = {
+  merchantPage: null,
+  currentMerchantDetails: null,
+  importedAdmins: []
+};
+
+const merchants = (state = initialState, action) => {
   switch (action.type) {
     case LIST_MERCHANTS + SUCCESS_SUFFIX:
       const data = action.payload.data;
