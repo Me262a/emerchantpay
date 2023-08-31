@@ -6,8 +6,8 @@ Task description: [`Payment System Task.pdf`](./Payment%20System%20Task.pdf)
 - Transaction Microservice to manage Transactions
 - Web UI
 - Postgres 15 as DB
-- Keycloak for handling authorization
-- Kafka for messaging
+- Keycloak 22 for handling authorization
+- Kafka 3.5 for messaging
 
 ## Tech stack
 - Java 17, spring boot 3.1.3, gradle, checkstyle
@@ -49,14 +49,15 @@ Tested with yarn package manager. But npm should also work.
 8. Click "New Transaction" at the top menu. Start with Authorize transaction.
 
 Notes:
-1. Merchants are not intended to use the merchant service.  
-Admins are not intended to use the transaction service.
+1. Merchants are not intended to use the merchant management service.  
+Admins are not intended to use the transaction management service.
 2. Each transaction belongs to a merchant that creates it (the "sub" JWT claim is scanned).
-3. For Merchants, the main id used across microservices is located in sub claim of their JWT  
-This id is generated in keycloak when a Merchant  is created there.
+3. For Merchants, the main id used across microservices is located in the "sub" claim of their JWT  
+This id is generated in keycloak when a Merchant is created there.
+This id is declared as String (not UUID) to avoid tight coupling with implementation.
 4. Admins are not stored in Merchant DB, they are stored in keycloak and its DB.  
 Default password for imported Admins is "password".
-5. Kafka has following Events:  
+5. Kafka handles the following Events:  
 5.1. Amount is charged (transaction topic)  
 5.2. Amount is refunded (transaction topic)  
 5.3. Merchant Status is changed (merchant topic)  
@@ -82,10 +83,10 @@ Useful links:
    (or "stage_")  
 
 4. Merchant service Swagger UI:  
-   http://localhost:8080/swagger-ui/index.html#
+   http://localhost:8081/swagger-ui/index.html#
 
 5. Transaction Microservice Swagger UI:  
-   http://localhost:8081/swagger-ui/index.html#/
+   http://localhost:8082/swagger-ui/index.html#/
 
 ## Tests
 All tests are checked and working.  
