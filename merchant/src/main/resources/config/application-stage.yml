@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/stage_emerchantpay
-    username: stage_db_admin
-    password: stage_db_password
+    url: jdbc:postgresql://${DB_URL} #db:5432/stage_emerchantpay
+    username: ${DB_ADMIN}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     properties:
@@ -12,7 +12,7 @@ spring:
     schemas: merchant
   security:
     cors:
-      allowed-origins: http://localhost:8080
+      allowed-origins: ${ALLOWED_ORIGINS} #http://localhost:8080, localhost:8080
       allowed-methods: GET,POST,PUT,DELETE,OPTIONS
     oauth2:
       resourceserver:
@@ -20,7 +20,7 @@ spring:
           jwk-set-uri: http://keycloak:8080/realms/emerchantpay/protocol/openid-connect/certs
           #issuer-uri: http://localhost:5451/realms/emerchantpay/.well-known/openid-configuration
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_URL} #kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -44,7 +44,7 @@ springdoc:
     docExpansion: list
     deepLinking: true
 keycloak-admin:
-  serverUrl: http://keycloak:8080
+  serverUrl: ${KEYCLOAK_ADMIN_URL} #http://keycloak:8080
   #TODO: Create and use admin from emerchantpay realm, not master realm
   realm: master
   clientId: admin-cli
@@ -55,7 +55,7 @@ webclient:
   transaction:
     connect-timeout: 2000
     read-timeout: 2000
-    base-url: http://transaction-ms:8082
+    base-url: ${TRANSACTION_MS_URL} #http://transaction-ms:8080
 server:
   port: 8080
 logging:
@@ -63,4 +63,5 @@ logging:
 #    root: DEBUG
     root: ERROR
     org.springframework.kafka: ERROR
+    org.apache.kafka: ERROR
 #    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

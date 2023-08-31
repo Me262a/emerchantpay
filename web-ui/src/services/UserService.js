@@ -1,6 +1,7 @@
 import Keycloak from "keycloak-js";
+import keycloakConfig from "../config/keycloakConfig";
 
-const _kc = new Keycloak('/keycloak.json');
+const _kc = new Keycloak(keycloakConfig);
 
 /**
  * Initializes Keycloak instance and calls the provided callback function if successfully authenticated.
@@ -8,6 +9,7 @@ const _kc = new Keycloak('/keycloak.json');
  * @param onAuthenticatedCallback
  */
 const initKeycloak = (onAuthenticatedCallback) => {
+  _kc.authServerUrl  = import.meta.env.VITE_KEYCLOAK_SERVER_URL;
   _kc.init({
     onLoad: 'check-sso',
     silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',

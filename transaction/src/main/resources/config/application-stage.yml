@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/stage_emerchantpay
-    username: stage_db_admin
-    password: stage_db_password
+    url: jdbc:postgresql://${DB_URL}
+    username: ${DB_ADMIN}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     properties:
@@ -12,7 +12,7 @@ spring:
     schemas: transaction
   security:
     cors:
-      allowed-origins: http://localhost:8080
+      allowed-origins: ${ALLOWED_ORIGINS}
       allowed-methods: GET,POST,PUT,DELETE,OPTIONS
     oauth2:
       resourceserver:
@@ -20,7 +20,7 @@ spring:
           jwk-set-uri: http://keycloak:8080/realms/emerchantpay/protocol/openid-connect/certs
           #issuer-uri: http://localhost:5451/realms/emerchantpay/.well-known/openid-configuration
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_URL}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -47,7 +47,7 @@ webclient:
   merchant:
     connect-timeout: 2000
     read-timeout: 2000
-    base-url: http://merchant-ms:8081
+    base-url: ${MERCHANT_MS_URL}
 server:
   port: 8080
 logging:
@@ -55,4 +55,5 @@ logging:
 #    root: DEBUG
     root: ERROR
     org.springframework.kafka: ERROR
+    org.apache.kafka: ERROR
 #    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

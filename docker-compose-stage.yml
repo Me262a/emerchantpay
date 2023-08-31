@@ -3,10 +3,6 @@ version: '3.8'
 services:
   db:
     image: postgres:15
-    environment:
-      - POSTGRES_DB=stage_emerchantpay
-      - POSTGRES_USER=stage_db_admin
-      - POSTGRES_PASSWORD=stage_db_password
     ports:
       - "5450:5432"
     networks:
@@ -14,10 +10,22 @@ services:
     volumes:
       - postgres_data_stage:/var/lib/postgresql/data
       - ./config/db-init/:/docker-entrypoint-initdb.d/
+    environment:
+      - POSTGRES_DB=stage_emerchantpay
+      - POSTGRES_USER=stage_db_admin
+      - POSTGRES_PASSWORD=stage_db_password
 
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.1
     command: start-dev --import-realm
+    ports:
+      - "5451:8080"
+    volumes:
+      - ./config/keycloak-emerchantpay-realm.json:/opt/keycloak/data/import/keycloak-emerchantpay-realm.json
+    networks:
+      - emerchantpay_network_stage
+    depends_on:
+      - db
     environment:
       - KEYCLOAK_ADMIN=stage_kc_admin
       - KEYCLOAK_ADMIN_PASSWORD=stage_kc_password
@@ -30,14 +38,6 @@ services:
       - KC_DB_SCHEMA=keycloak
       - KC_HEALTH_ENABLED=true
       - KC_METRICS_ENABLED=true
-    ports:
-      - "5451:8080"
-    volumes:
-      - ./config/keycloak-emerchantpay-realm.json:/opt/keycloak/data/import/keycloak-emerchantpay-realm.json
-    networks:
-      - emerchantpay_network_stage
-    depends_on:
-      - db
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -49,6 +49,14 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
+    volumes:
+      - /var/lib/kafka/data
+    ports:
+      - "5452:9094"
+    networks:
+      - emerchantpay_network_stage
+    depends_on:
+      - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -60,26 +68,18 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    volumes:
-      - /var/lib/kafka/data
-    ports:
-      - "5452:9094"
-    networks:
-      - emerchantpay_network_stage
-    depends_on:
-      - zookeeper
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     ports:
       - "5453:8080"
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
     networks:
       - emerchantpay_network_stage
     depends_on:
       - kafka
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
 
   merchant-ms:
     build:
@@ -87,13 +87,20 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:8080"
+    networks:
+      - emerchantpay_network_stage
     depends_on:
       - db
       - keycloak
       - kafka
-    networks:
-      - emerchantpay_network_stage
-#    environment:
+    environment:
+      DB_URL: db:5432/stage_emerchantpay
+      DB_ADMIN: stage_db_admin
+      DB_PASSWORD: stage_db_password
+      ALLOWED_ORIGINS: http://localhost:8080, localhost:8080
+      KAFKA_URL: kafka:9092
+      KEYCLOAK_ADMIN_URL: http://keycloak:8080
+      TRANSACTION_MS_URL: http://transaction-ms:8080
 
   transaction-ms:
     build:
@@ -101,13 +108,37 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8082:8080"
+    networks:
+      - emerchantpay_network_stage
     depends_on:
       - db
       - keycloak
       - kafka
+    environment:
+      DB_URL: db:5432/stage_emerchantpay
+      DB_ADMIN: stage_db_admin
+      DB_PASSWORD: stage_db_password
+      ALLOWED_ORIGINS: http://localhost:8080, localhost:8080
+      KAFKA_URL: kafka:9092
+      MERCHANT_MS_URL: http://merchant-ms:8080
+
+  web-ui:
+    build:
+      context: ./web-ui
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
     networks:
       - emerchantpay_network_stage
-##    environment:
+    depends_on:
+      - keycloak
+      - merchant-ms
+      - transaction-ms
+    environment:
+      VITE_SELF_URL: http://localhost:8080
+      VITE_KEYCLOAK_SERVER_URL: http://keycloak:5451
+      VITE_MERCHANT_URL: http://localhost:8081
+      VITE_TRANSACTION_URL: http://localhost:8082
 
 volumes:
   postgres_data_stage:

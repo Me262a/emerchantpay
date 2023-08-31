@@ -7,11 +7,12 @@ import UserService from "./services/UserService";
 import rootReducer from "./modules";
 import { configureStore } from '@reduxjs/toolkit';
 import { MICROSERVICE_MERCHANT, MICROSERVICE_TRANSACTION } from './AppConstants';
+const MERCHANT_BASE_URL = `${import.meta.env.VITE_MERCHANT_URL}/api/admin`;
+const TRANSACTION_BASE_URL = `${import.meta.env.VITE_TRANSACTION_URL}/api/transaction`;
 
 // HTTP
-
-const _axios_merchant = axios.create({ baseURL: 'http://localhost:8081/api/admin' });
-const _axios_transaction = axios.create({ baseURL: 'http://localhost:8082/api/transaction' });
+const _axios_merchant = axios.create({ baseURL: MERCHANT_BASE_URL });
+const _axios_transaction = axios.create({ baseURL: TRANSACTION_BASE_URL });
 
 const setupInterceptors = (axiosInstance) => {
   axiosInstance.interceptors.request.use((config) => {
