@@ -7,13 +7,21 @@ const LIST_TRANSACTIONS = 'LIST_TRANSACTIONS';
 const ADD_TRANSACTION = 'ADD_TRANSACTION';
 
 const initialState = {
+  transactionPage: null,
   transactionList: null,
   currentTransactionDetails: null,
-  transactionPage: null,
   serverErrors: null
 };
 
 const transactions = (state = initialState, action) => {
+  if (action.type.endsWith(ERROR_SUFFIX)) {
+    console.log(action.error.response.data);
+    return {
+      ...state,
+      serverErrors: action.error.response.data
+    };
+  }
+
   switch (action.type) {
     case LIST_TRANSACTIONS + SUCCESS_SUFFIX:
       const data = action.payload.data;
@@ -38,12 +46,6 @@ const transactions = (state = initialState, action) => {
       return {
         ...state,
         currentTransactionDetails: action.payload.data
-      };
-
-    case ADD_TRANSACTION + ERROR_SUFFIX:
-      return {
-        ...state,
-        serverErrors: action.payload.response.data
       };
 
     default:

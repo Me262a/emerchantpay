@@ -1,4 +1,4 @@
-import { SUCCESS_SUFFIX } from "redux-axios-middleware";
+import {ERROR_SUFFIX, SUCCESS_SUFFIX} from "redux-axios-middleware";
 import UserService from "../services/UserService";
 import MerchantPageView from "../domain/merchant/MerchantPageModel";
 import {MICROSERVICE_MERCHANT} from "../AppConstants";
@@ -15,10 +15,19 @@ const DELETE_ALL_MERCHANTS = 'DELETE_ALL_MERCHANTS';
 const initialState = {
   merchantPage: null,
   currentMerchantDetails: null,
-  importedAdmins: []
+  importedAdmins: [],
+  serverErrors: null
 };
 
 const merchants = (state = initialState, action) => {
+  if (action.type.endsWith(ERROR_SUFFIX)) {
+    console.log(action.error.response.data);
+    return {
+      ...state,
+      serverErrors: action.error.response.data
+    };
+  }
+
   switch (action.type) {
     case LIST_MERCHANTS + SUCCESS_SUFFIX:
       const data = action.payload.data;

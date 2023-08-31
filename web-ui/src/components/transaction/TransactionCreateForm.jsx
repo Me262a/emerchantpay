@@ -1,7 +1,7 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {useNavigate} from "react-router";
 import {
     addAuthorizeTransaction,
@@ -9,162 +9,64 @@ import {
     addRefundTransaction,
     addReversalTransaction
 } from "../../modules/transactions";
-import {toast} from "react-toastify";
 
-const AuthorizeFields = ({formik}) => (
-    <>
-        <div className="mb-3">
-            <label htmlFor="customerEmail" className="form-label">Customer Email</label>
-            <input
-                type="email"
-                className="form-control"
-                id="customerEmail"
-                name="customerEmail"
-                placeholder="Customer Email"
-                value={formik.values.customerEmail}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-            />
-            {formik.touched.customerEmail && formik.errors.customerEmail ? (
-                <div className="text-danger">{formik.errors.customerEmail}</div>
-            ) : null}
-        </div>
-        <div className="mb-3">
-            <label htmlFor="customerPhone" className="form-label">Customer Phone</label>
-            <input
-                type="tel"
-                className="form-control"
-                id="customerPhone"
-                name="customerPhone"
-                placeholder="Customer Phone"
-                value={formik.values.customerPhone}
-                onChange={formik.handleChange}
-            />
-        </div>
-        <div className="mb-3">
-            <label htmlFor="amount" className="form-label">Amount</label>
-            <input
-                type="number"
-                className="form-control"
-                id="amount"
-                name="amount"
-                placeholder="Amount"
-                value={formik.values.amount}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-            />
-            {formik.touched.amount && formik.errors.amount ? (
-                <div className="text-danger">{formik.errors.amount}</div>
-            ) : null}
-        </div>
-    </>
-);
-
-const ChargeFields = ({formik}) => (
-    <>
-        <div className="mb-3">
-            <label htmlFor="referenceId" className="form-label">Reference ID for Reversal</label>
-            <input
-                type="text"
-                className="form-control"
-                id="referenceId"
-                name="referenceId"
-                placeholder="Reference ID"
-                value={formik.values.referenceId}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-            />
-            {formik.touched.referenceId && formik.errors.referenceId ? (
-                <div className="text-danger">{formik.errors.referenceId}</div>
-            ) : null}
-        </div>
-        <div className="mb-3">
-            <label htmlFor="amount" className="form-label">Charge Amount</label>
-            <input
-                type="number"
-                className="form-control"
-                id="amount"
-                name="amount"
-                placeholder="Refund Amount"
-                value={formik.values.amount}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-            />
-            {formik.touched.amount && formik.errors.amount ? (
-                <div className="text-danger">{formik.errors.amount}</div>
-            ) : null}
-        </div>
-    </>
-);
-
-const RefundFields = ({formik}) => (
-    <>
-        <div className="mb-3">
-            <label htmlFor="referenceId" className="form-label">Reference ID for Reversal</label>
-            <input
-                type="text"
-                className="form-control"
-                id="referenceId"
-                name="referenceId"
-                placeholder="Reference ID"
-                value={formik.values.referenceId}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-            />
-            {formik.touched.referenceId && formik.errors.referenceId ? (
-                <div className="text-danger">{formik.errors.referenceId}</div>
-            ) : null}
-        </div>
-        <div className="mb-3">
-            <label htmlFor="amount" className="form-label">Refund Amount</label>
-            <input
-                type="number"
-                className="form-control"
-                id="amount"
-                name="amount"
-                placeholder="Refund Amount"
-                value={formik.values.amount}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-            />
-            {formik.touched.amount && formik.errors.amount ? (
-                <div className="text-danger">{formik.errors.amount}</div>
-            ) : null}
-        </div>
-    </>
-
-);
-
-const ReversalFields = ({formik}) => (
+const InputField = ({ formik, id, type, name, label, placeholder }) => (
     <div className="mb-3">
-        <label htmlFor="referenceId" className="form-label">Reference ID for Reversal</label>
+        <label htmlFor={id} className="form-label">{label}</label>
         <input
-            type="text"
+            type={type}
             className="form-control"
-            id="referenceId"
-            name="referenceId"
-            placeholder="Reference ID"
-            value={formik.values.referenceId}
+            id={id}
+            name={name}
+            placeholder={placeholder}
+            value={formik.values[name]}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
         />
-        {formik.touched.referenceId && formik.errors.referenceId ? (
-            <div className="text-danger">{formik.errors.referenceId}</div>
+        {formik.touched[name] && formik.errors[name] ? (
+            <div className="text-danger">{formik.errors[name]}</div>
         ) : null}
     </div>
 );
 
+const AuthorizeFields = ({ formik }) => (
+    <>
+        <InputField formik={formik} id="customerEmail" type="email" name="customerEmail"
+                    label="Customer Email" placeholder="Customer Email" />
+        <InputField formik={formik} id="customerPhone" type="tel" name="customerPhone"
+                    label="Customer Phone" placeholder="Customer Phone" />
+        <InputField formik={formik} id="amount" type="number" name="amount"
+                    label="Amount" placeholder="Amount" />
+    </>
+);
+
+const ChargeFields = ({ formik }) => (
+    <>
+        <InputField formik={formik} id="referenceId" type="text" name="referenceId"
+                    label="Reference UUID" placeholder="UUID of Authorise transaction" />
+        <InputField formik={formik} id="amount" type="number" name="amount"
+                    label="Charge Amount" placeholder="Refund Amount" />
+    </>
+);
+
+const RefundFields = ({ formik }) => (
+    <>
+        <InputField formik={formik} id="referenceId" type="text" name="referenceId"
+                    label="Reference UUID" placeholder="UUID of Charge transaction" />
+        <InputField formik={formik} id="amount" type="number" name="amount"
+                    label="Refund Amount" placeholder="Refund Amount" />
+    </>
+);
+
+const ReversalFields = ({ formik }) => (
+    <InputField formik={formik} id="referenceId" type="text" name="referenceId"
+                label="Reference UUID" placeholder="UUID of Authorise transaction" />
+);
+
+
 const TransactionCreateForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    // const serverErrors = useSelector(state => state.transactions.serverErrors);
-    //
-    // useEffect(() => {
-    //     serverErrors.forEach(error => {
-    //         toast.error(error);
-    //     });
-    // }, [serverErrors]);
 
     const getValidationSchema = (activeTab) => {
         switch (activeTab) {
@@ -232,7 +134,7 @@ const TransactionCreateForm = () => {
 
             if (action) {
                 dispatch(action).then((response) => {
-                    if (response && response.payload.data) {
+                    if (response?.payload?.data) {
                         navigate(`/transactions/view/${response.payload.data.uuid}`);
                     }
                 });

@@ -6,26 +6,30 @@ import RenderOnAnonymous from "./renders/RenderOnAnonymous";
 import Merchants from "./merchant/Merchants";
 import Transactions from "./transaction/Transactions";
 import NoPermissions from "./renders/NoPermissions";
-import {ToastContainer} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import ErrorHandler from "./ErrorHandler";
 
 const App = ({store}) => (
-  <Provider store={store}>
-    <BrowserRouter>
-      <div className="container">
-        <RenderOnAnonymous>
-          <Welcome/>
-        </RenderOnAnonymous>
-        <RenderOnAuthenticated roles={['admin']}>
-          <Merchants/>
-        </RenderOnAuthenticated>
-        <RenderOnAuthenticated roles={['merchant']}>
-          <Transactions/>
-        </RenderOnAuthenticated>
-        <NoPermissions/>
-      </div>
-      <ToastContainer />
-    </BrowserRouter>
-  </Provider>
+    <Provider store={store}>
+        <BrowserRouter>
+            <ErrorHandler>
+                <div className="container">
+                    <RenderOnAnonymous>
+                        <Welcome/>
+                    </RenderOnAnonymous>
+                    <RenderOnAuthenticated roles={['admin']}>
+                        <Merchants/>
+                    </RenderOnAuthenticated>
+                    <RenderOnAuthenticated roles={['merchant']}>
+                        <Transactions/>
+                    </RenderOnAuthenticated>
+                    <NoPermissions/>
+                </div>
+            </ErrorHandler>
+            <ToastContainer position={toast.POSITION.BOTTOM_RIGHT}/>
+        </BrowserRouter>
+    </Provider>
 );
 
 export default App;
