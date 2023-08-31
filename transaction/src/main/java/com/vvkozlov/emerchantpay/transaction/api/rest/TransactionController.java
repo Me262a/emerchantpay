@@ -33,8 +33,8 @@ public class TransactionController {
     @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid. " +
             "Any transaction, any role, not restricted to current user yet")
     @GetMapping("/single/{uuid}")
-    public ResponseEntity<TransactionViewDTO> getTransaction(@PathVariable UUID uuid) {
-        var operationResult = transactionService.getTransaction(uuid);
+    public ResponseEntity<TransactionViewDTO> getTransaction(@PathVariable UUID uuid, @AuthenticationPrincipal Jwt jwt) {
+        var operationResult = transactionService.getTransaction(jwt.getClaimAsString("sub"), uuid);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
         } else {
@@ -49,9 +49,10 @@ public class TransactionController {
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(name = "page", example = "0", description = "Page number") int page,
             @Parameter(name = "size", example = "10", description = "Items per page") int size,
-            @Parameter(name = "sort", example = "name,asc", description = "Sorting criteria") String sort
+            @Parameter(name = "sort", example = "name,asc", description = "Sorting criteria") String sort,
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        var operationResult = transactionService.getTransactions(pageable);
+        var operationResult = transactionService.getTransactions(jwt.getClaimAsString("sub"), pageable);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
         } else {
@@ -61,56 +62,45 @@ public class TransactionController {
 
     @Operation(summary = "Checks if specified merchant id has related transactions",
             description = "Returns a boolean of check result. " +
-            "Protection for this method to be added for real application")
+                    "Protection for this method to be added for real application")
     @GetMapping("/checkByMerchant/{belongsTo}")
     public ResponseEntity<Boolean> hasTransactionsForMerchant(@PathVariable String belongsTo) {
         boolean hasTransactions = transactionService.transactionsExistForMerchant(belongsTo);
         return ResponseEntity.ok(hasTransactions);
     }
 
-    @Operation(summary = "Creates auth transaction.", description = "Restricted to merchant role.")
+    @Operation(summary = "Creates authorize transaction.", description = "Restricted to merchant role.")
     @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
     @PostMapping("/authorize")
     public ResponseEntity<Object> createAuthorizeTransaction(@RequestBody AuthorizeTransactionCreateDTO createDto, @AuthenticationPrincipal Jwt jwt) {
-        //TODO: use filter to extract and store it in HttpServletRequest
-        createDto.setBelongsTo(jwt.getClaimAsString("sub"));
-        var operationResult = transactionService.processTransaction(createDto);
-        if (operationResult.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(operationResult.getResult());
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(operationResult.getErrors());
-        }
+        return processCreateTransaction(createDto, jwt);
     }
+
     @Operation(summary = "Creates charge transaction.", description = "Restricted to merchant role.")
     @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
     @PostMapping("/charge")
     public ResponseEntity<Object> createChargeTransaction(@RequestBody ChargeTransactionCreateDTO createDto, @AuthenticationPrincipal Jwt jwt) {
-        createDto.setBelongsTo(jwt.getClaimAsString("sub"));
-        var operationResult = transactionService.processTransaction(createDto);
-        if (operationResult.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(operationResult.getResult());
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(operationResult.getErrors());
-        }
+        return processCreateTransaction(createDto, jwt);
     }
 
     @Operation(summary = "Creates refund transaction.", description = "Restricted to merchant role.")
     @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
     @PostMapping("/refund")
     public ResponseEntity<Object> createRefundTransaction(@RequestBody RefundTransactionCreateDTO createDto, @AuthenticationPrincipal Jwt jwt) {
-        createDto.setBelongsTo(jwt.getClaimAsString("sub"));
-        var operationResult = transactionService.processTransaction(createDto);
-        if (operationResult.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(operationResult.getResult());
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(operationResult.getErrors());
-        }
+        return processCreateTransaction(createDto, jwt);
     }
 
     @Operation(summary = "Creates reversal transaction.", description = "Restricted to merchant role.")
     @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
     @PostMapping("/reversal")
     public ResponseEntity<Object> createReversalTransaction(@RequestBody ReversalTransactionCreateDTO createDto, @AuthenticationPrincipal Jwt jwt) {
+        return processCreateTransaction(createDto, jwt);
+    }
+
+    /**
+     * Generic method for creating transactions
+     */
+    private <T extends AbstractTransactionCreateDTO> ResponseEntity<Object> processCreateTransaction(T createDto, Jwt jwt) {
         createDto.setBelongsTo(jwt.getClaimAsString("sub"));
         var operationResult = transactionService.processTransaction(createDto);
         if (operationResult.isSuccess()) {

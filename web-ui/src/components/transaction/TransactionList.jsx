@@ -58,7 +58,7 @@ const TransactionList = () => {
             </button>
             <span className="align-self-center">Page: {page + 1}</span>
             <button
-                className={`btn btn-outline-primary ${page >= totalPages ? 'invisible' : ''}`}
+                className={`btn btn-outline-primary ${page >= totalPages - 1 ? 'invisible' : ''}`}
                 onClick={() => setPage(prev => prev + 1)}
             >
               Next

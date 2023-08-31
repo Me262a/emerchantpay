@@ -48,7 +48,7 @@ class TransactionServiceTest {
         AbstractTransaction mockTransaction = mock(AbstractTransaction.class);
         when(transactionRepository.findById(testId)).thenReturn(Optional.of(mockTransaction));
 
-        OperationResult<TransactionViewDTO> result = transactionService.getTransaction(testId);
+        OperationResult<TransactionViewDTO> result = transactionService.getTransaction(null, testId);
 
         assertTrue(result.isSuccess());
         assertNotNull(result.getResult());
@@ -59,7 +59,7 @@ class TransactionServiceTest {
         UUID testId = UUID.randomUUID();
         when(transactionRepository.findById(testId)).thenReturn(Optional.empty());
 
-        OperationResult<TransactionViewDTO> result = transactionService.getTransaction(testId);
+        OperationResult<TransactionViewDTO> result = transactionService.getTransaction(null, testId);
 
         assertFalse(result.isSuccess());
         assertNull(result.getResult());
@@ -71,7 +71,7 @@ class TransactionServiceTest {
         Page<AbstractTransaction> mockPage = new PageImpl<>(Collections.singletonList(mock(AbstractTransaction.class)));
         when(transactionRepository.findAll(any(PageRequest.class))).thenReturn(mockPage);
 
-        OperationResult<Page<TransactionViewDTO>> result = transactionService.getTransactions(PageRequest.of(0, 10));
+        OperationResult<Page<TransactionViewDTO>> result = transactionService.getTransactions(null, PageRequest.of(0, 10));
 
         assertTrue(result.isSuccess());
         assertNotNull(result.getResult());

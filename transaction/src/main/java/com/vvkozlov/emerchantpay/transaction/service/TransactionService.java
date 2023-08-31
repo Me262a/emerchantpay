@@ -34,17 +34,30 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    public OperationResult<TransactionViewDTO> getTransaction(final UUID id) {
-        AbstractTransaction transaction = transactionRepository.findById(id).orElse(null);
+    public OperationResult<TransactionViewDTO> getTransaction(final String belongsTo, final UUID uuid) {
+        AbstractTransaction transaction;
+        if (belongsTo != null) {
+            transaction = transactionRepository.findByUuidAndBelongsTo(uuid, belongsTo).orElse(null);
+        } else {
+            transaction = transactionRepository.findById(uuid).orElse(null);
+        }
+
         if (transaction == null) {
             return OperationResult.failure("Transaction not found");
         }
         return OperationResult.success(TransactionMapper.INSTANCE.toDto(transaction));
     }
 
+
     @Transactional(readOnly = true)
-    public OperationResult<Page<TransactionViewDTO>> getTransactions(final Pageable pageable) {
-        Page<AbstractTransaction> transactions = transactionRepository.findAll(pageable);
+    public OperationResult<Page<TransactionViewDTO>> getTransactions(final String belongsTo, final Pageable pageable) {
+        Page<AbstractTransaction> transactions;
+        if (belongsTo != null) {
+            transactions = transactionRepository.findAllByBelongsTo(belongsTo, pageable);
+        } else {
+            transactions = transactionRepository.findAll(pageable);
+        }
+
         List<TransactionViewDTO> viewDTOs = transactions.stream()
                 .map(TransactionMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
