@@ -49,7 +49,9 @@ public abstract class AbstractTransactionProcessor<T extends AbstractTransaction
         }
 
         transactionRepository.save(transactionEntity);
-        sendEventsForTransaction(transactionEntity);
+        if (transactionEntity.getStatus() != TransactionStatusEnum.ERROR) {
+            sendEventsForTransaction(transactionEntity);
+        }
 
         return OperationResult.success(TransactionMapper.INSTANCE.toDto(transactionEntity));
     }
