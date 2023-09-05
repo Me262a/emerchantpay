@@ -86,7 +86,7 @@ export const getMerchant = (id) => {
     microservice: MICROSERVICE_MERCHANT,
     payload: {
       request: {
-        url: `/merchant/${id}`,
+        url: `/ui/merchants/${id}`,
         method: 'GET',
       },
     },
@@ -98,7 +98,7 @@ export const getMerchantsPage = (page, size, sort) => ({
   microservice: MICROSERVICE_MERCHANT,
   payload: {
     request: {
-      url: `/merchant?page=${page}&size=${size}&sort=${sort}`,
+      url: `/ui/merchants?page=${page}&size=${size}&sort=${sort}`,
       method: 'GET',
     },
   },
@@ -111,7 +111,7 @@ export const updateMerchant = (id, data) => {
     microservice: MICROSERVICE_MERCHANT,
     payload: {
       request: {
-        url: `/merchant/${id}`,
+        url: `/ui/merchants/${id}`,
         method: 'PUT',
         data: data,
       },
@@ -127,7 +127,7 @@ export const importMerchants = () => {
     microservice: MICROSERVICE_MERCHANT,
     payload: {
       request: {
-        url: '/merchant/import',
+        url: '/ui/merchants/import',
         method: 'POST',
       },
     },
@@ -141,7 +141,7 @@ export const importAdmins = () => {
     microservice: MICROSERVICE_MERCHANT,
     payload: {
       request: {
-        url: '/import',
+        url: '/ui/admins/import',
         method: 'POST',
       },
     },
@@ -155,7 +155,7 @@ export const deleteMerchant = (id) => {
     microservice: MICROSERVICE_MERCHANT,
     payload: {
       request: {
-        url: `/merchant/${id}`,
+        url: `/ui/merchants/${id}`,
         method: 'DELETE',
       },
     },
@@ -169,7 +169,7 @@ export const deleteAllMerchants = () => {
     microservice: MICROSERVICE_MERCHANT,
     payload: {
       request: {
-        url: '/merchant',
+        url: '/ui/merchants',
         method: 'DELETE',
       },
     },

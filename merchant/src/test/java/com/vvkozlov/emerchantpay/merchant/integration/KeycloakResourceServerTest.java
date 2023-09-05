@@ -1,10 +1,9 @@
 package com.vvkozlov.emerchantpay.merchant.integration;
 
 import com.vvkozlov.emerchantpay.merchant.MerchantApplication;
-import com.vvkozlov.emerchantpay.merchant.api.rest.AdminController;
+import com.vvkozlov.emerchantpay.merchant.controller.ui.MerchantUIController;
 import com.vvkozlov.emerchantpay.merchant.integration.config.UnitTestSecurityConfig;
 import com.vvkozlov.emerchantpay.merchant.integration.config.WebMvcConfig;
-import com.vvkozlov.emerchantpay.merchant.service.AdminService;
 import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
@@ -34,16 +33,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This test requires running dev keycloak instance
  */
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(AdminController.class)
+@WebMvcTest(MerchantUIController.class)
 @AutoConfigureMockMvc
 @Import({WebMvcConfig.class, UnitTestSecurityConfig.class})
 public class KeycloakResourceServerTest {
 
 	@Autowired
 	MockMvc mockMvc;
-
-	@MockBean
-	private AdminService adminService;
 
 	@MockBean
 	private MerchantService merchantService;
@@ -82,13 +78,13 @@ public class KeycloakResourceServerTest {
 		when(merchantService.getMerchant(testID)).thenReturn(OperationResult.success(mockMerchant));
 
 		RequestPostProcessor bearerToken = bearerTokenFor("emp_admin", "emp_admin_password");
-		this.mockMvc.perform(get("/api/admin/merchant/" + testID).with(bearerToken))
+		this.mockMvc.perform(get("/ui/merchants/" + testID).with(bearerToken))
 				.andExpect(status().isOk());
 	}
 
 	@Test
 	void testNoToken() throws Exception {
-		this.mockMvc.perform(get("/api/admin/merchant/testID"))
+		this.mockMvc.perform(get("/ui/merchants/testID"))
 				.andExpect(status().isUnauthorized());
 	}
 

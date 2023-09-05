@@ -1,4 +1,4 @@
-package com.vvkozlov.emerchantpay.merchant.unit;
+package com.vvkozlov.emerchantpay.merchant.unit.service;
 
 import com.vvkozlov.emerchantpay.merchant.service.AdminService;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;

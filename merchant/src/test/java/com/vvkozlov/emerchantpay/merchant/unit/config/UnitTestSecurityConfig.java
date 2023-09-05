@@ -32,7 +32,7 @@ public class UnitTestSecurityConfig {
         //Protect everything else
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/sw.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
-                .requestMatchers("/api/merchant/status/*").permitAll()
+                .requestMatchers("/api/merchants/*/status").permitAll()
                 .anyRequest().authenticated()
         );
 

@@ -7,7 +7,7 @@ import UserService from "./services/UserService";
 import rootReducer from "./modules";
 import { configureStore } from '@reduxjs/toolkit';
 import { MICROSERVICE_MERCHANT, MICROSERVICE_TRANSACTION } from './AppConstants';
-const MERCHANT_BASE_URL = `${import.meta.env.VITE_MERCHANT_URL}/api/admin`;
+const MERCHANT_BASE_URL = `${import.meta.env.VITE_MERCHANT_URL}`;
 const TRANSACTION_BASE_URL = `${import.meta.env.VITE_TRANSACTION_URL}/api/transaction`;
 
 // HTTP

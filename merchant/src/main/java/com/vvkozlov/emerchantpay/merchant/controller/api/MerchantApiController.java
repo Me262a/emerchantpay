@@ -1,4 +1,4 @@
-package com.vvkozlov.emerchantpay.merchant.api.rest;
+package com.vvkozlov.emerchantpay.merchant.controller.api;
 
 import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
 import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
  * Admin controller to manage merchants and import admins.
  */
 @RestController
-@RequestMapping("/api/merchant")
-public class MerchantStatusController {
+@RequestMapping("/api/merchants")
+public class MerchantApiController {
 
     private final MerchantService merchantService;
 
     @Autowired
-    public MerchantStatusController(MerchantService merchantService) {
+    public MerchantApiController(MerchantService merchantService) {
         this.merchantService = merchantService;
     }
 
@@ -32,7 +32,7 @@ public class MerchantStatusController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "The merchant was not found")
     })
-    @GetMapping("status/{id}")
+    @GetMapping("{id}/status")
     public ResponseEntity<Boolean> getIsMerchantActive(@PathVariable String id) {
         var operationResult = merchantService.getMerchant(id);
         if (operationResult.isSuccess()) {

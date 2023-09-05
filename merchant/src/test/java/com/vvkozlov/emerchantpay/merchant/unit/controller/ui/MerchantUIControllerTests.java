@@ -1,9 +1,8 @@
-package com.vvkozlov.emerchantpay.merchant.unit;
+package com.vvkozlov.emerchantpay.merchant.unit.controller.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vvkozlov.emerchantpay.merchant.api.rest.AdminController;
+import com.vvkozlov.emerchantpay.merchant.controller.ui.MerchantUIController;
 import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
-import com.vvkozlov.emerchantpay.merchant.service.AdminService;
 import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantEditDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
@@ -39,16 +38,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(AdminController.class)
+@WebMvcTest(MerchantUIController.class)
 @Import({WebMvcConfig.class, UnitTestSecurityConfig.class})
 @WithMockUser(authorities = "admin")
-class AdminControllerTests {
+class MerchantUIControllerTests {
+
+    final String CONTROLLER_BASE_URL = "/ui/merchants";
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private AdminService adminService;
 
     @MockBean
     private MerchantService merchantService;
@@ -64,7 +62,7 @@ class AdminControllerTests {
         mockMerchant.setId(testID);
         when(merchantService.getMerchant(testID)).thenReturn(OperationResult.success(mockMerchant));
 
-        mockMvc.perform(get("/api/admin/merchant/" + testID))
+        mockMvc.perform(get(CONTROLLER_BASE_URL + "/" + testID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testID));
     }
@@ -74,7 +72,7 @@ class AdminControllerTests {
         when(merchantService.getMerchant("invalidID")).thenReturn(OperationResult
                 .failure("Merchant not found."));
 
-        mockMvc.perform(get("/api/admin/merchant/invalidID"))
+        mockMvc.perform(get(CONTROLLER_BASE_URL + "/invalidID"))
                 .andExpect(status().isNotFound());
     }
 
@@ -98,20 +96,11 @@ class AdminControllerTests {
 
         when(merchantService.updateMerchant(eq(testId), any(MerchantEditDTO.class))).thenReturn(OperationResult.success(updatedMockMerchant));
 
-        mockMvc.perform(put("/api/admin/merchant/" + testId).with(csrf())
+        mockMvc.perform(put(CONTROLLER_BASE_URL + "/" + testId).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(editDTOPayload))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Updated Merchant"));
-    }
-
-    @Test
-    public void testImportAdminsFromCsv_Success() throws Exception {
-        when(adminService.importAdminsFromCsv()).thenReturn(OperationResult.success(Collections.emptyList())); // empty list for simplicity
-
-        mockMvc.perform(post("/api/admin/import").with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
     }
 
     @Test
@@ -120,43 +109,16 @@ class AdminControllerTests {
 
         when(merchantService.getMerchants(any(Pageable.class))).thenReturn(OperationResult.success(page));
 
-        mockMvc.perform(get("/api/admin/merchant?page=0&size=10&sort=id"))
+        mockMvc.perform(get(CONTROLLER_BASE_URL + "?page=0&size=10&sort=id"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElements").value(0));
-    }
-
-
-    @Test
-    public void testImportMerchantsFromCsv_Success() throws Exception {
-        when(merchantService.importMerchantsFromCsv()).thenReturn(OperationResult.success(Collections.emptyList()));
-
-        mockMvc.perform(post("/api/admin/merchant/import").with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
-    }
-
-    @Test
-    @WithMockUser(authorities = "merchant")
-    public void testImportMerchantsFromCsv_Forbidden() throws Exception {
-        when(merchantService.importMerchantsFromCsv()).thenReturn(OperationResult.success(Collections.emptyList()));
-
-        mockMvc.perform(post("/api/admin/merchant/import").with(csrf()))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    public void testImportMerchantsFromCsv_Failure() throws Exception {
-        when(merchantService.importMerchantsFromCsv()).thenReturn(OperationResult.failure("Error importing merchants"));
-
-        mockMvc.perform(post("/api/admin/merchant/import").with(csrf()))
-                .andExpect(status().isInternalServerError());
     }
 
     @Test
     public void testRemoveMerchantById_Success() throws Exception {
         when(merchantService.removeMerchantById("testID")).thenReturn(OperationResult.success(null));
 
-        mockMvc.perform(delete("/api/admin/merchant/testID").with(csrf()))
+        mockMvc.perform(delete(CONTROLLER_BASE_URL + "/testID").with(csrf()))
                 .andExpect(status().isOk());
     }
 
@@ -164,7 +126,7 @@ class AdminControllerTests {
     public void testRemoveMerchantById_Failure() throws Exception {
         when(merchantService.removeMerchantById("invalidID")).thenReturn(OperationResult.failure("Merchant not found"));
 
-        mockMvc.perform(delete("/api/admin/merchant/invalidID").with(csrf()))
+        mockMvc.perform(delete(CONTROLLER_BASE_URL + "/invalidID").with(csrf()))
                 .andExpect(status().isBadRequest());
     }
 
@@ -172,7 +134,7 @@ class AdminControllerTests {
     public void testRemoveAllMerchants_Success() throws Exception {
         when(merchantService.removeAllMerchants(false)).thenReturn(OperationResult.success(null));
 
-        mockMvc.perform(delete("/api/admin/merchant").with(csrf()))
+        mockMvc.perform(delete(CONTROLLER_BASE_URL).with(csrf()))
                 .andExpect(status().isOk());
     }
 
@@ -180,7 +142,7 @@ class AdminControllerTests {
     public void testRemoveAllMerchants_Failure() throws Exception {
         when(merchantService.removeAllMerchants(false)).thenReturn(OperationResult.failure("Error deleting all merchants"));
 
-        mockMvc.perform(delete("/api/admin/merchant").with(csrf()))
+        mockMvc.perform(delete("/ui/merchants").with(csrf()))
                 .andExpect(status().isBadRequest());
     }
 }

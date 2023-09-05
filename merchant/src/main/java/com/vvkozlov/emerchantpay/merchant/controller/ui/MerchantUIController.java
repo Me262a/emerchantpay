@@ -1,8 +1,6 @@
-package com.vvkozlov.emerchantpay.merchant.api.rest;
+package com.vvkozlov.emerchantpay.merchant.controller.ui;
 
-import com.vvkozlov.emerchantpay.merchant.service.AdminService;
 import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
-import com.vvkozlov.emerchantpay.merchant.service.model.AdminViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantEditDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,16 +21,14 @@ import java.util.List;
  * Admin controller to manage merchants and import admins.
  */
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/ui/merchants")
 @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.merchant.domain.constants.UserRoles).ROLE_ADMIN)")
-public class AdminController {
+public class MerchantUIController {
 
-    private final AdminService adminService;
     private final MerchantService merchantService;
 
     @Autowired
-    public AdminController(AdminService adminService, MerchantService merchantService) {
-        this.adminService = adminService;
+    public MerchantUIController(MerchantService merchantService) {
         this.merchantService = merchantService;
     }
 
@@ -41,7 +37,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "The merchant was not found")
     })
-    @GetMapping("merchant/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<MerchantViewDTO> getMerchant(@PathVariable String id) {
         var operationResult = merchantService.getMerchant(id);
         if (operationResult.isSuccess()) {
@@ -59,7 +55,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "500", description = "Server error - the check server log")
     })
-    @GetMapping("merchant")
+    @GetMapping("")
     public ResponseEntity<Page<MerchantViewDTO>> getMerchants(
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(name = "page", example = "0", description = "Page number") int page,
@@ -82,7 +78,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "500", description = "Server error - check the server log")
     })
-    @PutMapping("merchant/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<MerchantViewDTO> updateMerchant(@PathVariable String id, @RequestBody MerchantEditDTO dto) {
         var operationResult = merchantService.updateMerchant(id, dto);
         if (operationResult.isSuccess()) {
@@ -91,43 +87,6 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-    @Operation(
-            summary = "Import new admins",
-            description = "Import admins from pre-defined csv file in classpath."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully imported"),
-            @ApiResponse(responseCode = "500", description = "Server error - check the server log")
-    })
-    @PostMapping("import")
-    public ResponseEntity<List<AdminViewDTO>> importAdminsFromCsv() {
-        var operationResult = adminService.importAdminsFromCsv();
-        if (operationResult.isSuccess()) {
-            return ResponseEntity.ok(operationResult.getResult());
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @Operation(
-            summary = "Import new merchants",
-            description = "Import merchants from pre-defined csv file in classpath. Returns list of imported merchants."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully imported"),
-            @ApiResponse(responseCode = "500", description = "Server error - check the server log")
-    })
-    @PostMapping("merchant/import")
-    public ResponseEntity<List<MerchantViewDTO>> importMerchantsFromCsv() {
-        var operationResult = merchantService.importMerchantsFromCsv();
-        if (operationResult.isSuccess()) {
-            return ResponseEntity.ok(operationResult.getResult());
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     @Operation(
             summary = "Remove a merchant by user auth ID",
             description = "Delete a merchant based on the provided user ID."
@@ -136,7 +95,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Successfully removed the merchant"),
             @ApiResponse(responseCode = "500", description = "Server error - check the server log")
     })
-    @DeleteMapping("merchant/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<List<String>> removeMerchantById(@PathVariable String id) {
         var operationResult = merchantService.removeMerchantById(id);
         if (operationResult.isSuccess()) {
@@ -154,7 +113,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Successfully removed all merchants"),
             @ApiResponse(responseCode = "500", description = "Server error - check the server log")
     })
-    @DeleteMapping("merchant")
+    @DeleteMapping("")
     public ResponseEntity<List<String>> removeAllMerchants() {
         //set parameter to true if you want to check that merchants does not have transactions associated
         var operationResult = merchantService.removeAllMerchants(false);
