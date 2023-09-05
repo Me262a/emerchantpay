@@ -8,7 +8,7 @@ import rootReducer from "./modules";
 import { configureStore } from '@reduxjs/toolkit';
 import { MICROSERVICE_MERCHANT, MICROSERVICE_TRANSACTION } from './AppConstants';
 const MERCHANT_BASE_URL = `${import.meta.env.VITE_MERCHANT_URL}`;
-const TRANSACTION_BASE_URL = `${import.meta.env.VITE_TRANSACTION_URL}/api/transaction`;
+const TRANSACTION_BASE_URL = `${import.meta.env.VITE_TRANSACTION_URL}`;
 
 // HTTP
 const _axios_merchant = axios.create({ baseURL: MERCHANT_BASE_URL });

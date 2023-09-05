@@ -21,7 +21,7 @@ public class MerchantWebClientService implements MerchantMsClient {
         try {
             Boolean isActive = webClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/api/merchant/status/{merchantId}")
+                            .path("/api/merchants/{merchantId}/status")
                             .build(merchantId))
                     .retrieve()
                     .onStatus(status -> status.equals(HttpStatus.NOT_FOUND),

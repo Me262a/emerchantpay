@@ -19,7 +19,7 @@ public class TransactionWebClientService implements TransactionMsClient {
         try {
             Boolean hasTransactions = webClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/api/transaction/checkByMerchant/{merchantId}")
+                            .path("/api/merchants/{merchantId}/transactions/exist")
                             .build(merchantId))
                     .retrieve()
                     .bodyToMono(Boolean.class)

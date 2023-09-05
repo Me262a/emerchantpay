@@ -1,4 +1,4 @@
-package com.vvkozlov.emerchantpay.transaction.api.rest;
+package com.vvkozlov.emerchantpay.transaction.controller.ui;
 
 import com.vvkozlov.emerchantpay.transaction.service.TransactionService;
 import com.vvkozlov.emerchantpay.transaction.service.model.*;
@@ -20,19 +20,20 @@ import java.util.UUID;
  * Transaction controller to manage transactions.
  */
 @RestController
-@RequestMapping("/api/transaction")
-public class TransactionController {
+@RequestMapping("/ui/transactions")
+@PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
+public class TransactionUIController {
 
     private final TransactionService transactionService;
 
     @Autowired
-    public TransactionController(TransactionService transactionService) {
+    public TransactionUIController(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
 
     @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid. " +
             "Any transaction, any role, not restricted to current user yet")
-    @GetMapping("/single/{uuid}")
+    @GetMapping("{uuid}")
     public ResponseEntity<TransactionViewDTO> getTransaction(@PathVariable UUID uuid, @AuthenticationPrincipal Jwt jwt) {
         var operationResult = transactionService.getTransaction(jwt.getClaimAsString("sub"), uuid);
         if (operationResult.isSuccess()) {
@@ -44,7 +45,7 @@ public class TransactionController {
 
     @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid. " +
             "All transactions on the server, any role, not restricted to current user yet")
-    @GetMapping("all")
+    @GetMapping("")
     public ResponseEntity<Page<TransactionViewDTO>> getTransactions(
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(name = "page", example = "0", description = "Page number") int page,
@@ -60,47 +61,12 @@ public class TransactionController {
         }
     }
 
-    @Operation(summary = "Checks if specified merchant id has related transactions",
-            description = "Returns a boolean of check result. " +
-                    "Protection for this method to be added for real application")
-    @GetMapping("/checkByMerchant/{belongsTo}")
-    public ResponseEntity<Boolean> hasTransactionsForMerchant(@PathVariable String belongsTo) {
-        boolean hasTransactions = transactionService.transactionsExistForMerchant(belongsTo);
-        return ResponseEntity.ok(hasTransactions);
-    }
-
-    @Operation(summary = "Creates authorize transaction.", description = "Restricted to merchant role.")
-    @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
-    @PostMapping("/authorize")
-    public ResponseEntity<Object> createAuthorizeTransaction(@RequestBody AuthorizeTransactionCreateDTO createDto, @AuthenticationPrincipal Jwt jwt) {
-        return processCreateTransaction(createDto, jwt);
-    }
-
-    @Operation(summary = "Creates charge transaction.", description = "Restricted to merchant role.")
-    @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
-    @PostMapping("/charge")
-    public ResponseEntity<Object> createChargeTransaction(@RequestBody ChargeTransactionCreateDTO createDto, @AuthenticationPrincipal Jwt jwt) {
-        return processCreateTransaction(createDto, jwt);
-    }
-
-    @Operation(summary = "Creates refund transaction.", description = "Restricted to merchant role.")
-    @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
-    @PostMapping("/refund")
-    public ResponseEntity<Object> createRefundTransaction(@RequestBody RefundTransactionCreateDTO createDto, @AuthenticationPrincipal Jwt jwt) {
-        return processCreateTransaction(createDto, jwt);
-    }
-
-    @Operation(summary = "Creates reversal transaction.", description = "Restricted to merchant role.")
-    @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
-    @PostMapping("/reversal")
-    public ResponseEntity<Object> createReversalTransaction(@RequestBody ReversalTransactionCreateDTO createDto, @AuthenticationPrincipal Jwt jwt) {
-        return processCreateTransaction(createDto, jwt);
-    }
-
-    /**
-     * Generic method for creating transactions
-     */
-    private <T extends AbstractTransactionCreateDTO> ResponseEntity<Object> processCreateTransaction(T createDto, Jwt jwt) {
+    @Operation(summary = "Creates a transaction.", description = "Restricted to merchant role.")
+    @PostMapping("")
+    public ResponseEntity<Object> createTransaction(
+            @RequestBody AbstractTransactionCreateDTO createDto,
+            @AuthenticationPrincipal Jwt jwt)
+    {
         createDto.setBelongsTo(jwt.getClaimAsString("sub"));
         var operationResult = transactionService.processTransaction(createDto);
         if (operationResult.isSuccess()) {

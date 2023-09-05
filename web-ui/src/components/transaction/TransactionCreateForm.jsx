@@ -4,11 +4,9 @@ import * as Yup from "yup";
 import {useDispatch} from "react-redux";
 import {useNavigate} from "react-router";
 import {
-    addAuthorizeTransaction,
-    addChargeTransaction,
-    addRefundTransaction,
-    addReversalTransaction
+    addTransaction,
 } from "../../modules/transactions";
+import {TransactionType} from "../../AppConstants";
 
 const InputField = ({ formik, id, type, name, label, placeholder }) => (
     <div className="mb-3">
@@ -117,16 +115,16 @@ const TransactionCreateForm = () => {
             let action;
             switch (values.activeTab) {
                 case 'Authorize':
-                    action = addAuthorizeTransaction(values);
+                    action = addTransaction({ transactionType: TransactionType.AUTHORIZE, ...values  });
                     break;
                 case 'Charge':
-                    action = addChargeTransaction(values);
+                    action = addTransaction({ transactionType: TransactionType.CHARGE, ...values });
                     break;
                 case 'Refund':
-                    action = addRefundTransaction(values);
+                    action = addTransaction({ transactionType: TransactionType.REFUND,  ...values  });
                     break;
                 case 'Reversal':
-                    action = addReversalTransaction(values);
+                    action = addTransaction({ transactionType: TransactionType.REVERSAL,  ...values  });
                     break;
                 default:
                     break;

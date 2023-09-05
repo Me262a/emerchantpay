@@ -1,2 +1,10 @@
 export const MICROSERVICE_MERCHANT ='MICROSERVICE_MERCHANT';
 export const MICROSERVICE_TRANSACTION ='MICROSERVICE_TRANSACTION';
+
+export const TransactionType = Object.freeze({
+    AUTHORIZE: "AUTHORIZE",
+    CHARGE: "CHARGE",
+    REFUND: "REFUND",
+    REVERSAL: "REVERSAL",
+});
+

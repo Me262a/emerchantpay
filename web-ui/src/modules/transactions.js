@@ -62,7 +62,7 @@ export const getTransaction = (uuid) => {
     microservice: MICROSERVICE_TRANSACTION,
     payload: {
       request: {
-        url: `/single/${uuid}`,
+        url: `/ui/transactions/${uuid}`,
         method: 'GET',
       },
     },
@@ -74,20 +74,20 @@ export const getTransactionsPage = (page, size, sort) => ({
   microservice: MICROSERVICE_TRANSACTION,
   payload: {
     request: {
-      url: `all?page=${page}&size=${size}&sort=${sort}`,
+      url: `/ui/transactions?page=${page}&size=${size}&sort=${sort}`,
       method: 'GET',
     },
   },
 });
 
-export const addAuthorizeTransaction = (transaction) => {
+export const addTransaction = (transaction) => {
   console.log(`${UserService.getUsername()} added the authorize transaction for customer ${transaction.email}`);
   return {
     type: ADD_TRANSACTION,
     microservice: MICROSERVICE_TRANSACTION,
     payload: {
       request: {
-        url: '/authorize',
+        url: '/ui/transactions',
         method: 'POST',
         data: transaction,
       },
@@ -95,47 +95,3 @@ export const addAuthorizeTransaction = (transaction) => {
   }
 };
 
-export const addChargeTransaction = (transaction) => {
-  console.log(`${UserService.getUsername()} added the charge transaction refId=${transaction.referenceId}`);
-  return {
-    type: ADD_TRANSACTION,
-    microservice: MICROSERVICE_TRANSACTION,
-    payload: {
-      request: {
-        url: '/charge',
-        method: 'POST',
-        data: transaction,
-      },
-    },
-  }
-};
-
-export const addRefundTransaction = (transaction) => {
-  console.log(`${UserService.getUsername()} added the refund transaction refId=${transaction.referenceId}`);
-  return {
-    type: ADD_TRANSACTION,
-    microservice: MICROSERVICE_TRANSACTION,
-    payload: {
-      request: {
-        url: '/refund',
-        method: 'POST',
-        data: transaction,
-      },
-    },
-  }
-};
-
-export const addReversalTransaction = (transaction) => {
-  console.log(`${UserService.getUsername()} added the reversal transaction refId=${transaction.referenceId}`);
-  return {
-    type: ADD_TRANSACTION,
-    microservice: MICROSERVICE_TRANSACTION,
-    payload: {
-      request: {
-        url: '/reversal',
-        method: 'POST',
-        data: transaction,
-      },
-    },
-  }
-};
