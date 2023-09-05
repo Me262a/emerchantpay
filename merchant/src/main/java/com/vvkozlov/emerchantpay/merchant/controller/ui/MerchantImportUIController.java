@@ -1,7 +1,7 @@
 package com.vvkozlov.emerchantpay.merchant.controller.ui;
 
-import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
-import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.UserCsvImporterService;
+import com.vvkozlov.emerchantpay.merchant.service.model.BaseUserViewDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,11 +23,11 @@ import java.util.List;
 @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.merchant.domain.constants.UserRoles).ROLE_ADMIN)")
 public class MerchantImportUIController {
 
-    private final MerchantService merchantService;
+    private final UserCsvImporterService userCsvImporterService;
 
     @Autowired
-    public MerchantImportUIController(MerchantService merchantService) {
-        this.merchantService = merchantService;
+    public MerchantImportUIController(UserCsvImporterService userCsvImporterService) {
+        this.userCsvImporterService = userCsvImporterService;
     }
 
     @Operation(
@@ -39,8 +39,8 @@ public class MerchantImportUIController {
             @ApiResponse(responseCode = "500", description = "Server error - check the server log")
     })
     @PostMapping("")
-    public ResponseEntity<List<MerchantViewDTO>> importMerchantsFromCsv() {
-        var operationResult = merchantService.importMerchantsFromCsv();
+    public ResponseEntity<List<? extends BaseUserViewDTO>> importMerchantsFromCsv() {
+        var operationResult = userCsvImporterService.importUsersFromCsv();
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
         } else {

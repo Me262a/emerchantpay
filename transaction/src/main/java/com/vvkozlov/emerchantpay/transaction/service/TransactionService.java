@@ -2,6 +2,9 @@ package com.vvkozlov.emerchantpay.transaction.service;
 
 import com.vvkozlov.emerchantpay.transaction.domain.entities.AbstractTransaction;
 import com.vvkozlov.emerchantpay.transaction.infra.repository.TransactionRepository;
+import com.vvkozlov.emerchantpay.transaction.service.contract.service.MerchantTransactionsRetrievalService;
+import com.vvkozlov.emerchantpay.transaction.service.contract.service.TransactionHandlingService;
+import com.vvkozlov.emerchantpay.transaction.service.contract.service.TransactionRetrievalService;
 import com.vvkozlov.emerchantpay.transaction.service.mapper.TransactionMapper;
 import com.vvkozlov.emerchantpay.transaction.service.model.AbstractTransactionCreateDTO;
 import com.vvkozlov.emerchantpay.transaction.service.model.TransactionViewDTO;
@@ -23,7 +26,8 @@ import java.util.stream.Collectors;
  * The Transaction service to get, list, import, update, remove transactions.
  */
 @Service
-public class TransactionService {
+public class TransactionService implements MerchantTransactionsRetrievalService,
+        TransactionHandlingService, TransactionRetrievalService {
     private final TransactionRepository transactionRepository;
     private final TransactionProcessorFactory processorFactory;
 

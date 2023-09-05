@@ -4,10 +4,14 @@ import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
 import com.vvkozlov.emerchantpay.merchant.domain.constants.UserRoles;
 import com.vvkozlov.emerchantpay.merchant.domain.entities.Merchant;
 import com.vvkozlov.emerchantpay.merchant.infra.repository.MerchantRepository;
-import com.vvkozlov.emerchantpay.merchant.service.contract.MessageBrokerProducer;
-import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
-import com.vvkozlov.emerchantpay.merchant.service.contract.TransactionMsClient;
+import com.vvkozlov.emerchantpay.merchant.service.contract.*;
+import com.vvkozlov.emerchantpay.merchant.service.contract.mb.MessageBrokerProducer;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.MerchantManagementService;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.MerchantMessageBrokerService;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.MerchantRetrievalService;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.UserCsvImporterService;
 import com.vvkozlov.emerchantpay.merchant.service.mapper.MerchantMapper;
+import com.vvkozlov.emerchantpay.merchant.service.model.BaseUserViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantEditDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.messagebroker.TransactionMbModel;
@@ -16,6 +20,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,11 +40,12 @@ import java.util.stream.Collectors;
  * The Merchant service to get, list, import, update, remove merchants.
  */
 @Service
-public class MerchantService {
+@Primary
+public class MerchantService implements MerchantRetrievalService,
+        MerchantManagementService, MerchantMessageBrokerService, UserCsvImporterService {
     private final MerchantRepository merchantRepository;
     private final OAuthServerAdminClient oAuthServerAdminClient;
     private final MessageBrokerProducer mbProducer;
-
     private final TransactionMsClient transactionMsClient;
 
     @Autowired
@@ -57,6 +63,7 @@ public class MerchantService {
      * @return Operation result. If successful, it will contain the merchant dto.
      */
     @Transactional(readOnly = true)
+    @Override
     public OperationResult<MerchantViewDTO> getMerchant(final String id) {
         Optional<Merchant> merchantOpt = merchantRepository.findByAuthId(id);
         if (merchantOpt.isPresent()) {
@@ -75,6 +82,7 @@ public class MerchantService {
      * @return Operation result. If successful, it will contain the merchants page.
      */
     @Transactional(readOnly = true)
+    @Override
     public OperationResult<Page<MerchantViewDTO>> getMerchants(final Pageable pageable) {
         Page<Merchant> merchants = merchantRepository.findAll(pageable);
         List<MerchantViewDTO> viewDTOs = merchants.stream()
@@ -91,6 +99,7 @@ public class MerchantService {
      * @return the operation result containing updated Merchant DTO
      */
     @Transactional
+    @Override
     public OperationResult<MerchantViewDTO> updateMerchant(final String id, final MerchantEditDTO dto) {
         try {
             Optional<Merchant> existingMerchant = merchantRepository.findByAuthId(id);
@@ -126,6 +135,7 @@ public class MerchantService {
     *
     * */
     @Transactional
+    @Override
     public OperationResult<MerchantViewDTO> addTransactionAmountToMerchant(TransactionMbModel tranMbModel) {
         try {
             Optional<Merchant> existingMerchant = merchantRepository.findByAuthId(tranMbModel.getBelongsTo());
@@ -157,7 +167,8 @@ public class MerchantService {
      * @return the operation result
      */
     @Transactional
-    public OperationResult<List<MerchantViewDTO>> importMerchantsFromCsv() {
+    @Override
+    public OperationResult<List<? extends BaseUserViewDTO>> importUsersFromCsv() {
         try {
             ClassPathResource resource = new ClassPathResource("csv/merchants.csv");
             Reader reader = new InputStreamReader(resource.getInputStream());
@@ -207,6 +218,7 @@ public class MerchantService {
      * @return the operation result
      */
     @Transactional
+    @Override
     public OperationResult<Void> removeMerchantById(final String merchantId) {
         try {
             OperationResult<Boolean> hasTransactionsResult = transactionMsClient.getDoesMerchantHaveTransactions(merchantId);
@@ -230,6 +242,7 @@ public class MerchantService {
      * @return the operation result with the list of removed merchant auth ids
      */
     @Transactional
+    @Override
     public OperationResult<List<String>> removeAllMerchants(boolean checkForActiveTransactions) {
         final String roleName = UserRoles.ROLE_MERCHANT;
         try {

@@ -1,7 +1,7 @@
 package com.vvkozlov.emerchantpay.merchant.controller.api;
 
 import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
-import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.MerchantRetrievalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,21 +20,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/merchants")
 public class MerchantApiController {
 
-    private final MerchantService merchantService;
+    private final MerchantRetrievalService merchantRetrievalService;
 
     @Autowired
-    public MerchantApiController(MerchantService merchantService) {
-        this.merchantService = merchantService;
+    public MerchantApiController(MerchantRetrievalService merchantRetrievalService) {
+        this.merchantRetrievalService = merchantRetrievalService;
     }
 
-    @Operation(summary = "Get a merchant status by uuid", description = "Returns a merchant status data as per the uuid.")
+    @Operation(
+            summary = "Get a merchant status by uuid",
+            description = "Returns a merchant status data as per the uuid."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "The merchant was not found")
     })
     @GetMapping("{id}/status")
     public ResponseEntity<Boolean> getIsMerchantActive(@PathVariable String id) {
-        var operationResult = merchantService.getMerchant(id);
+        var operationResult = merchantRetrievalService.getMerchant(id);
         if (operationResult.isSuccess()) {
             boolean isActive = operationResult.getResult().getStatus() == MerchantStatusEnum.ACTIVE;
             return ResponseEntity.ok(isActive);

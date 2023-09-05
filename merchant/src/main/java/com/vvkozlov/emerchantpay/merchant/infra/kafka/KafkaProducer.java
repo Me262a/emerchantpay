@@ -1,6 +1,6 @@
 package com.vvkozlov.emerchantpay.merchant.infra.kafka;
 
-import com.vvkozlov.emerchantpay.merchant.service.contract.MessageBrokerProducer;
+import com.vvkozlov.emerchantpay.merchant.service.contract.mb.MessageBrokerProducer;
 import com.vvkozlov.emerchantpay.merchant.service.model.messagebroker.MerchantMbModel;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.vvkozlov.emerchantpay.merchant.service.contract;
+package com.vvkozlov.emerchantpay.merchant.service.contract.mb;
 
 
 import com.vvkozlov.emerchantpay.merchant.service.model.messagebroker.TransactionMbModel;

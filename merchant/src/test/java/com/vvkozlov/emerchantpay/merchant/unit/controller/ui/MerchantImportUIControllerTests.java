@@ -2,6 +2,8 @@ package com.vvkozlov.emerchantpay.merchant.unit.controller.ui;
 
 import com.vvkozlov.emerchantpay.merchant.controller.ui.MerchantImportUIController;
 import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.MerchantRetrievalService;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.UserCsvImporterService;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import com.vvkozlov.emerchantpay.merchant.unit.config.UnitTestSecurityConfig;
 import com.vvkozlov.emerchantpay.merchant.unit.config.WebMvcConfig;
@@ -34,7 +36,7 @@ class MerchantImportUIControllerTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private MerchantService merchantService;
+    private UserCsvImporterService userCsvImporterService;
 
     @BeforeEach
     void setup() {
@@ -42,7 +44,7 @@ class MerchantImportUIControllerTests {
 
     @Test
     public void testImportMerchantsFromCsv_Success() throws Exception {
-        when(merchantService.importMerchantsFromCsv()).thenReturn(OperationResult.success(Collections.emptyList()));
+        when(userCsvImporterService.importUsersFromCsv()).thenReturn(OperationResult.success(Collections.emptyList()));
 
         mockMvc.perform(post("/ui/merchants/import").with(csrf()))
                 .andExpect(status().isOk())
@@ -52,7 +54,7 @@ class MerchantImportUIControllerTests {
     @Test
     @WithMockUser(authorities = "merchant")
     public void testImportMerchantsFromCsv_Forbidden() throws Exception {
-        when(merchantService.importMerchantsFromCsv()).thenReturn(OperationResult.success(Collections.emptyList()));
+        when(userCsvImporterService.importUsersFromCsv()).thenReturn(OperationResult.success(Collections.emptyList()));
 
         mockMvc.perform(post("/ui/merchants/import").with(csrf()))
                 .andExpect(status().isForbidden());
@@ -60,7 +62,7 @@ class MerchantImportUIControllerTests {
 
     @Test
     public void testImportMerchantsFromCsv_Failure() throws Exception {
-        when(merchantService.importMerchantsFromCsv()).thenReturn(OperationResult.failure("Error importing merchants"));
+        when(userCsvImporterService.importUsersFromCsv()).thenReturn(OperationResult.failure("Error importing merchants"));
 
         mockMvc.perform(post("/ui/merchants/import").with(csrf()))
                 .andExpect(status().isInternalServerError());

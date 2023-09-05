@@ -2,7 +2,7 @@ package com.vvkozlov.emerchantpay.merchant.unit.controller.api;
 
 import com.vvkozlov.emerchantpay.merchant.controller.api.MerchantApiController;
 import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
-import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.MerchantRetrievalService;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import com.vvkozlov.emerchantpay.merchant.unit.config.UnitTestSecurityConfig;
@@ -35,7 +35,7 @@ class MerchantApiControllerTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private MerchantService merchantService;
+    private MerchantRetrievalService merchantRetrievalService;
 
     @BeforeEach
     void setup() {
@@ -48,7 +48,7 @@ class MerchantApiControllerTests {
         when(merchantDTO.getStatus()).thenReturn(MerchantStatusEnum.ACTIVE);
         OperationResult<MerchantViewDTO> operationResult = OperationResult.success(merchantDTO);
 
-        when(merchantService.getMerchant(id)).thenReturn(operationResult);
+        when(merchantRetrievalService.getMerchant(id)).thenReturn(operationResult);
 
         mockMvc.perform(get(CONTROLLER_BASE_URL + "/{id}/status", id)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -63,7 +63,7 @@ class MerchantApiControllerTests {
         when(merchantDTO.getStatus()).thenReturn(MerchantStatusEnum.INACTIVE);
         OperationResult<MerchantViewDTO> operationResult = OperationResult.success(merchantDTO);
 
-        when(merchantService.getMerchant(id)).thenReturn(operationResult);
+        when(merchantRetrievalService.getMerchant(id)).thenReturn(operationResult);
 
         mockMvc.perform(get(CONTROLLER_BASE_URL + "/{id}/status", id)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -76,7 +76,7 @@ class MerchantApiControllerTests {
         String id = "12345";
         OperationResult<MerchantViewDTO> operationResult = OperationResult.failure("Merchant not found");
 
-        when(merchantService.getMerchant(id)).thenReturn(operationResult);
+        when(merchantRetrievalService.getMerchant(id)).thenReturn(operationResult);
 
         mockMvc.perform(get(CONTROLLER_BASE_URL + "/{id}/status", id)
                         .contentType(MediaType.APPLICATION_JSON))

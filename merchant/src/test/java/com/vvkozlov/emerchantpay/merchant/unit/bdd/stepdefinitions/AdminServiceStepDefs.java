@@ -3,6 +3,7 @@ package com.vvkozlov.emerchantpay.merchant.unit.bdd.stepdefinitions;
 import com.vvkozlov.emerchantpay.merchant.service.AdminService;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
 import com.vvkozlov.emerchantpay.merchant.service.model.AdminViewDTO;
+import com.vvkozlov.emerchantpay.merchant.service.model.BaseUserViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -27,7 +28,7 @@ public class AdminServiceStepDefs {
     @Mock
     private OAuthServerAdminClient oAuthServerAdminClient;
 
-    private OperationResult<List<AdminViewDTO>> result;
+    private OperationResult<List<? extends BaseUserViewDTO>> result;
 
     private AutoCloseable closeable;
 
@@ -59,7 +60,7 @@ public class AdminServiceStepDefs {
 
     @When("I import admins from CSV")
     public void i_import_admins_from_csv() {
-        result = adminService.importAdminsFromCsv();
+        result = adminService.importUsersFromCsv();
     }
 
     @Then("the import is successful and returns a list of 2 admins")

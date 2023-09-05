@@ -1,6 +1,7 @@
 package com.vvkozlov.emerchantpay.transaction.controller.ui;
 
-import com.vvkozlov.emerchantpay.transaction.service.TransactionService;
+import com.vvkozlov.emerchantpay.transaction.service.contract.service.TransactionHandlingService;
+import com.vvkozlov.emerchantpay.transaction.service.contract.service.TransactionRetrievalService;
 import com.vvkozlov.emerchantpay.transaction.service.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,18 +25,21 @@ import java.util.UUID;
 @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_MERCHANT)")
 public class TransactionUIController {
 
-    private final TransactionService transactionService;
+    private final TransactionRetrievalService transactionRetrievalService;
+    private final TransactionHandlingService transactionHandlingService;
+
 
     @Autowired
-    public TransactionUIController(TransactionService transactionService) {
-        this.transactionService = transactionService;
+    public TransactionUIController(TransactionRetrievalService transactionRetrievalService, TransactionHandlingService transactionHandlingService) {
+        this.transactionRetrievalService = transactionRetrievalService;
+        this.transactionHandlingService = transactionHandlingService;
     }
 
     @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid. " +
             "Any transaction, any role, not restricted to current user yet")
     @GetMapping("{uuid}")
     public ResponseEntity<TransactionViewDTO> getTransaction(@PathVariable UUID uuid, @AuthenticationPrincipal Jwt jwt) {
-        var operationResult = transactionService.getTransaction(jwt.getClaimAsString("sub"), uuid);
+        var operationResult = transactionRetrievalService.getTransaction(jwt.getClaimAsString("sub"), uuid);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
         } else {
@@ -53,7 +57,7 @@ public class TransactionUIController {
             @Parameter(name = "sort", example = "name,asc", description = "Sorting criteria") String sort,
             @AuthenticationPrincipal Jwt jwt
     ) {
-        var operationResult = transactionService.getTransactions(jwt.getClaimAsString("sub"), pageable);
+        var operationResult = transactionRetrievalService.getTransactions(jwt.getClaimAsString("sub"), pageable);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
         } else {
@@ -68,7 +72,7 @@ public class TransactionUIController {
             @AuthenticationPrincipal Jwt jwt)
     {
         createDto.setBelongsTo(jwt.getClaimAsString("sub"));
-        var operationResult = transactionService.processTransaction(createDto);
+        var operationResult = transactionHandlingService.processTransaction(createDto);
         if (operationResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(operationResult.getResult());
         } else {

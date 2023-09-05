@@ -2,6 +2,7 @@ package com.vvkozlov.emerchantpay.merchant.unit.controller.ui;
 
 import com.vvkozlov.emerchantpay.merchant.controller.ui.AdminImportUIController;
 import com.vvkozlov.emerchantpay.merchant.service.AdminService;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.UserCsvImporterService;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import com.vvkozlov.emerchantpay.merchant.unit.config.UnitTestSecurityConfig;
 import com.vvkozlov.emerchantpay.merchant.unit.config.WebMvcConfig;
@@ -42,7 +43,7 @@ class AdminImportUIControllerTests {
 
     @Test
     public void testImportAdminsFromCsv_Success() throws Exception {
-        when(adminService.importAdminsFromCsv()).thenReturn(OperationResult.success(Collections.emptyList())); // empty list for simplicity
+        when(adminService.importUsersFromCsv()).thenReturn(OperationResult.success(Collections.emptyList())); // empty list for simplicity
 
         mockMvc.perform(post("/ui/admins/import").with(csrf()))
                 .andExpect(status().isOk())

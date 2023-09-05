@@ -5,7 +5,7 @@ import com.vvkozlov.emerchantpay.transaction.domain.entities.AbstractTransaction
 import com.vvkozlov.emerchantpay.transaction.domain.entities.ChargeTransaction;
 import com.vvkozlov.emerchantpay.transaction.domain.entities.RefundTransaction;
 import com.vvkozlov.emerchantpay.transaction.infra.repository.TransactionRepository;
-import com.vvkozlov.emerchantpay.transaction.service.contract.MessageBrokerProducer;
+import com.vvkozlov.emerchantpay.transaction.service.contract.mb.MessageBrokerProducer;
 import com.vvkozlov.emerchantpay.transaction.service.mapper.TransactionMapper;
 import com.vvkozlov.emerchantpay.transaction.service.model.RefundTransactionCreateDTO;
 import com.vvkozlov.emerchantpay.transaction.service.validator.RefundTransactionValidator;

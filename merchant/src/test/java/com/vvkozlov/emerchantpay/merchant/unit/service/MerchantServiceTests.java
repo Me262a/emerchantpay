@@ -4,7 +4,7 @@ import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
 import com.vvkozlov.emerchantpay.merchant.domain.entities.Merchant;
 import com.vvkozlov.emerchantpay.merchant.infra.repository.MerchantRepository;
 import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
-import com.vvkozlov.emerchantpay.merchant.service.contract.MessageBrokerProducer;
+import com.vvkozlov.emerchantpay.merchant.service.contract.mb.MessageBrokerProducer;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
 import com.vvkozlov.emerchantpay.merchant.service.contract.TransactionMsClient;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantEditDTO;

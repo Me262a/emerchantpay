@@ -3,7 +3,9 @@ package com.vvkozlov.emerchantpay.merchant.service;
 
 import com.vvkozlov.emerchantpay.merchant.domain.constants.UserRoles;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.UserCsvImporterService;
 import com.vvkozlov.emerchantpay.merchant.service.model.AdminViewDTO;
+import com.vvkozlov.emerchantpay.merchant.service.model.BaseUserViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -20,8 +22,8 @@ import java.util.List;
 /**
  * The Admin service to import admins.
  */
-@Service
-public class AdminService {
+@Service("adminservice")
+public class AdminService implements UserCsvImporterService {
     private final OAuthServerAdminClient oAuthServerAdminClient;
 
     @Autowired
@@ -34,7 +36,8 @@ public class AdminService {
      *
      * @return the operation result
      */
-    public OperationResult<List<AdminViewDTO>> importAdminsFromCsv() {
+    @Override
+    public OperationResult<List<? extends BaseUserViewDTO>> importUsersFromCsv() {
         try {
             ClassPathResource resource = new ClassPathResource("csv/admins.csv");
             Reader reader = new InputStreamReader(resource.getInputStream());

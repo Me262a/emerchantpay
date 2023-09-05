@@ -1,6 +1,7 @@
 package com.vvkozlov.emerchantpay.merchant.controller.ui;
 
-import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.MerchantManagementService;
+import com.vvkozlov.emerchantpay.merchant.service.contract.service.MerchantRetrievalService;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantEditDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.MerchantViewDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,11 +26,14 @@ import java.util.List;
 @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.merchant.domain.constants.UserRoles).ROLE_ADMIN)")
 public class MerchantUIController {
 
-    private final MerchantService merchantService;
+    private final MerchantRetrievalService merchantRetrievalService;
+    private final MerchantManagementService merchantManagementService;
 
     @Autowired
-    public MerchantUIController(MerchantService merchantService) {
-        this.merchantService = merchantService;
+    public MerchantUIController(MerchantRetrievalService merchantRetrievalService, MerchantManagementService merchantManagementService) {
+
+        this.merchantRetrievalService = merchantRetrievalService;
+        this.merchantManagementService = merchantManagementService;
     }
 
     @Operation(summary = "Get a merchant by id", description = "Returns a merchant data as per the id.")
@@ -39,7 +43,7 @@ public class MerchantUIController {
     })
     @GetMapping("{id}")
     public ResponseEntity<MerchantViewDTO> getMerchant(@PathVariable String id) {
-        var operationResult = merchantService.getMerchant(id);
+        var operationResult = merchantRetrievalService.getMerchant(id);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
         } else {
@@ -62,7 +66,7 @@ public class MerchantUIController {
             @Parameter(name = "size", example = "10", description = "Items per page") int size,
             @Parameter(name = "sort", example = "name,asc", description = "Sorting criteria") String sort
     ) {
-        var operationResult = merchantService.getMerchants(pageable);
+        var operationResult = merchantRetrievalService.getMerchants(pageable);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
         } else {
@@ -80,7 +84,7 @@ public class MerchantUIController {
     })
     @PutMapping("{id}")
     public ResponseEntity<MerchantViewDTO> updateMerchant(@PathVariable String id, @RequestBody MerchantEditDTO dto) {
-        var operationResult = merchantService.updateMerchant(id, dto);
+        var operationResult = merchantManagementService.updateMerchant(id, dto);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok(operationResult.getResult());
         } else {
@@ -97,7 +101,7 @@ public class MerchantUIController {
     })
     @DeleteMapping("{id}")
     public ResponseEntity<List<String>> removeMerchantById(@PathVariable String id) {
-        var operationResult = merchantService.removeMerchantById(id);
+        var operationResult = merchantManagementService.removeMerchantById(id);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok().build();
         } else {
@@ -116,7 +120,7 @@ public class MerchantUIController {
     @DeleteMapping("")
     public ResponseEntity<List<String>> removeAllMerchants() {
         //set parameter to true if you want to check that merchants does not have transactions associated
-        var operationResult = merchantService.removeAllMerchants(false);
+        var operationResult = merchantManagementService.removeAllMerchants(false);
         if (operationResult.isSuccess()) {
             return ResponseEntity.ok().build();
         } else {

@@ -3,6 +3,7 @@ package com.vvkozlov.emerchantpay.merchant.unit.service;
 import com.vvkozlov.emerchantpay.merchant.service.AdminService;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
 import com.vvkozlov.emerchantpay.merchant.service.model.AdminViewDTO;
+import com.vvkozlov.emerchantpay.merchant.service.model.BaseUserViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ public class AdminServiceTests {
         when(oAuthServerAdminClient.addUser(anyString(), anyList()))
                 .thenReturn(OperationResult.success("123456"));
 
-        OperationResult<List<AdminViewDTO>> result = adminService.importAdminsFromCsv();
+        OperationResult<List<? extends BaseUserViewDTO>> result = adminService.importUsersFromCsv();
 
         assertTrue(result.isSuccess());
         assertEquals(2, result.getResult().size());
@@ -47,7 +48,7 @@ public class AdminServiceTests {
         when(oAuthServerAdminClient.addUser(anyString(), anyList()))
                 .thenThrow(new RuntimeException("Failed to add user"));
 
-        OperationResult<List<AdminViewDTO>> result = adminService.importAdminsFromCsv();
+        OperationResult<List<? extends BaseUserViewDTO>> result = adminService.importUsersFromCsv();
 
         assertFalse(result.isSuccess());
         assertTrue(result.getErrors().stream().findFirst().orElse("")
