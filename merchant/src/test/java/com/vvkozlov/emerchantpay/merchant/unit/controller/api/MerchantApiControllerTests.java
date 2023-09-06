@@ -1,5 +1,9 @@
 package com.vvkozlov.emerchantpay.merchant.unit.controller.api;
 
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.vvkozlov.emerchantpay.merchant.controller.api.MerchantApiController;
 import com.vvkozlov.emerchantpay.merchant.domain.constants.MerchantStatusEnum;
 import com.vvkozlov.emerchantpay.merchant.service.contract.service.MerchantRetrievalService;
@@ -15,8 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.security.KeyPair;
+import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -27,12 +38,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(MerchantApiController.class)
 @Import({WebMvcConfig.class, UnitTestSecurityConfig.class})
+@WithMockUser(authorities = "merchant")
 class MerchantApiControllerTests {
 
     final String CONTROLLER_BASE_URL = "/api/merchants";
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private KeyPair testKeyPair;
 
     @MockBean
     private MerchantRetrievalService merchantRetrievalService;
@@ -50,8 +65,12 @@ class MerchantApiControllerTests {
 
         when(merchantRetrievalService.getMerchant(id)).thenReturn(operationResult);
 
-        mockMvc.perform(get(CONTROLLER_BASE_URL + "/{id}/status", id)
-                        .contentType(MediaType.APPLICATION_JSON))
+        String token = createJwtToken(id, List.of("merchant"));
+
+        mockMvc.perform(get(CONTROLLER_BASE_URL + "/is-active")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true));
     }
@@ -65,7 +84,10 @@ class MerchantApiControllerTests {
 
         when(merchantRetrievalService.getMerchant(id)).thenReturn(operationResult);
 
-        mockMvc.perform(get(CONTROLLER_BASE_URL + "/{id}/status", id)
+        String token = createJwtToken(id, List.of("merchant"));
+
+        mockMvc.perform(get(CONTROLLER_BASE_URL + "/is-active")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(false));
@@ -76,10 +98,41 @@ class MerchantApiControllerTests {
         String id = "12345";
         OperationResult<MerchantViewDTO> operationResult = OperationResult.failure("Merchant not found");
 
+        String token = createJwtToken(id, List.of("merchant"));
+
         when(merchantRetrievalService.getMerchant(id)).thenReturn(operationResult);
 
-        mockMvc.perform(get(CONTROLLER_BASE_URL + "/{id}/status", id)
+        mockMvc.perform(get(CONTROLLER_BASE_URL + "/is-active")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetIsMerchantActive_Forbidden() throws Exception {
+        String id = "12345";
+        String token = createJwtToken(id, List.of("admin"));
+
+        mockMvc.perform(get(CONTROLLER_BASE_URL + "/is-active")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    /** Create signed JWT using Nimbus
+     */
+    private String createJwtToken(String subject, List<String> authorities) throws JOSEException {
+        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                .subject(subject)
+                .claim("authorities", authorities)
+                .build();
+
+        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).type(JOSEObjectType.JWT).build();
+        SignedJWT signedJWT = new SignedJWT(header, claimsSet);
+        JWSSigner signer = new RSASSASigner(testKeyPair.getPrivate());
+
+        signedJWT.sign(signer);
+
+        return signedJWT.serialize();
     }
 }
