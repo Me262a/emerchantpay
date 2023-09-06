@@ -1,12 +1,13 @@
 import axios from "axios";
-import { createRoot } from "react-dom/client";
+import {createRoot} from "react-dom/client";
 import axiosMiddleware from "redux-axios-middleware";
 import thunk from "redux-thunk";
 import App from "./components/App";
 import UserService from "./services/UserService";
 import rootReducer from "./modules";
-import { configureStore } from '@reduxjs/toolkit';
-import { MICROSERVICE_MERCHANT, MICROSERVICE_TRANSACTION } from './AppConstants';
+import {configureStore} from '@reduxjs/toolkit';
+import {MICROSERVICE_MERCHANT, MICROSERVICE_TRANSACTION} from './AppConstants';
+
 const MERCHANT_BASE_URL = `${import.meta.env.VITE_MERCHANT_URL}`;
 const TRANSACTION_BASE_URL = `${import.meta.env.VITE_TRANSACTION_URL}`;
 

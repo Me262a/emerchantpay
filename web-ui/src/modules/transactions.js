@@ -1,4 +1,4 @@
-import { SUCCESS_SUFFIX, ERROR_SUFFIX  } from "redux-axios-middleware";
+import {ERROR_SUFFIX, SUCCESS_SUFFIX} from "redux-axios-middleware";
 import UserService from "../services/UserService";
 import {MICROSERVICE_TRANSACTION} from "../AppConstants";
 

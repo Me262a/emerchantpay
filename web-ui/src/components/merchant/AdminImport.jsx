@@ -1,5 +1,5 @@
-import { useDispatch, useSelector } from "react-redux";
-import { importAdmins } from "../../modules/merchants";
+import {useDispatch, useSelector} from "react-redux";
+import {importAdmins} from "../../modules/merchants";
 
 const AdminImport = () => {
     const dispatch = useDispatch();

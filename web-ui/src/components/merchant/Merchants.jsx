@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import AdminImport from "./AdminImport";
 import MerchantList from "./MerchantList";
 import Menu from "./Menu";

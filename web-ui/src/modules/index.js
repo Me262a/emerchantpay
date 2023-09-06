@@ -1,4 +1,4 @@
-import { combineReducers } from "redux";
+import {combineReducers} from "redux";
 import merchants from "./merchants";
 import transactions from "./transactions";
 

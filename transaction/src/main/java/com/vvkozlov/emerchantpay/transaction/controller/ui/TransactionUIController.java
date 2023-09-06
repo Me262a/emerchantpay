@@ -2,7 +2,8 @@ package com.vvkozlov.emerchantpay.transaction.controller.ui;
 
 import com.vvkozlov.emerchantpay.transaction.service.contract.service.TransactionHandlingService;
 import com.vvkozlov.emerchantpay.transaction.service.contract.service.TransactionRetrievalService;
-import com.vvkozlov.emerchantpay.transaction.service.model.*;
+import com.vvkozlov.emerchantpay.transaction.service.model.AbstractTransactionCreateDTO;
+import com.vvkozlov.emerchantpay.transaction.service.model.TransactionViewDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,9 +3,7 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 import {useDispatch} from "react-redux";
 import {useNavigate} from "react-router";
-import {
-    addTransaction,
-} from "../../modules/transactions";
+import {addTransaction,} from "../../modules/transactions";
 import {TransactionType} from "../../AppConstants";
 
 const InputField = ({ formik, id, type, name, label, placeholder }) => (

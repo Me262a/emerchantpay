@@ -1,6 +1,6 @@
 package com.vvkozlov.emerchantpay.transaction.infra.repository;
 
-import com.vvkozlov.emerchantpay.transaction.domain.entities.*;
+import com.vvkozlov.emerchantpay.transaction.domain.entities.AbstractTransaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

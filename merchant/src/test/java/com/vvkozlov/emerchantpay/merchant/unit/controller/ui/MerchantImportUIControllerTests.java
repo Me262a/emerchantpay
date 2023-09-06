@@ -1,8 +1,6 @@
 package com.vvkozlov.emerchantpay.merchant.unit.controller.ui;
 
 import com.vvkozlov.emerchantpay.merchant.controller.ui.MerchantImportUIController;
-import com.vvkozlov.emerchantpay.merchant.service.MerchantService;
-import com.vvkozlov.emerchantpay.merchant.service.contract.service.MerchantRetrievalService;
 import com.vvkozlov.emerchantpay.merchant.service.contract.service.UserCsvImporterService;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import com.vvkozlov.emerchantpay.merchant.unit.config.UnitTestSecurityConfig;

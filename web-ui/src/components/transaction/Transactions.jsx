@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import TransactionDetails from "./TransactionDetails";
 import TransactionCreateForm from "./TransactionCreateForm";
 import TransactionList from "./TransactionList";

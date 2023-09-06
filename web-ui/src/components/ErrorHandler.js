@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
+import {useEffect} from 'react';
+import {useSelector} from 'react-redux';
+import {toast} from 'react-toastify';
 
 const ErrorHandler = ({ children }) => {
     const serverErrors = useSelector(state => state.transactions.serverErrors);

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import UserService from "../../services/UserService";
 
 const Menu = () => (

@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import {getMerchantsPage, deleteMerchant, importMerchants, deleteAllMerchants} from "../../modules/merchants";
+import {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {Link} from "react-router-dom";
+import {deleteAllMerchants, deleteMerchant, getMerchantsPage, importMerchants} from "../../modules/merchants";
 
 const MerchantList = () => {
   const dispatch = useDispatch();

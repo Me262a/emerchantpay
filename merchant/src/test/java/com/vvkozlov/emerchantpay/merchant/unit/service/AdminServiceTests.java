@@ -2,7 +2,6 @@ package com.vvkozlov.emerchantpay.merchant.unit.service;
 
 import com.vvkozlov.emerchantpay.merchant.service.AdminService;
 import com.vvkozlov.emerchantpay.merchant.service.contract.OAuthServerAdminClient;
-import com.vvkozlov.emerchantpay.merchant.service.model.AdminViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.model.BaseUserViewDTO;
 import com.vvkozlov.emerchantpay.merchant.service.util.OperationResult;
 import org.junit.jupiter.api.BeforeEach;
