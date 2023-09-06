@@ -42,7 +42,6 @@ public class OAuthResourceServerConfiguration {
         //Protect everything else
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/sw.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
-                .requestMatchers("/api/merchants/*/transactions/exist").permitAll()
                 .anyRequest().authenticated()
         );
 		//Set up oauth resource server

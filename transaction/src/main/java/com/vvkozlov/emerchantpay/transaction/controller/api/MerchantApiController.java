@@ -4,6 +4,7 @@ import com.vvkozlov.emerchantpay.transaction.service.contract.service.MerchantTr
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/merchants")
+@PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_ADMIN)")
 public class MerchantApiController {
 
     private final MerchantTransactionsRetrievalService merchantTransactionsRetrievalService;
