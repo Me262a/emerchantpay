@@ -1,0 +1,417 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8082",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/ui/transactions": {
+      "get": {
+        "tags": [
+          "transaction-ui-controller"
+        ],
+        "summary": "Get paged transactions",
+        "description": "Specify page number, size, and sort order. Returns a list of transactions in a page.",
+        "operationId": "getTransactions",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 0
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Items per page",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 10
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "name,asc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageTransactionViewDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "transaction-ui-controller"
+        ],
+        "summary": "Creates a transaction.",
+        "description": "Returns a created transaction or error message.",
+        "operationId": "createTransaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/AbstractTransactionCreateDTO"
+                  },
+                  {
+                    "$ref": "#/components/schemas/AuthorizeTransactionCreateDTO"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ChargeTransactionCreateDTO"
+                  },
+                  {
+                    "$ref": "#/components/schemas/RefundTransactionCreateDTO"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ReversalTransactionCreateDTO"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ui/transactions/{uuid}": {
+      "get": {
+        "tags": [
+          "transaction-ui-controller"
+        ],
+        "summary": "Get a transaction by uuid",
+        "description": "Returns a transaction data as per the uuid",
+        "operationId": "getTransaction",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionViewDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/merchants/{merchantId}/transactions/exist": {
+      "get": {
+        "tags": [
+          "merchant-transactions-api-controller"
+        ],
+        "summary": "Checks if specified merchant id has associated transactions",
+        "description": "Returns true if the merchant has associated transactions, false if not.",
+        "operationId": "hasTransactionsForMerchant",
+        "parameters": [
+          {
+            "name": "merchantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AbstractTransactionCreateDTO": {
+        "required": [
+          "transactionType"
+        ],
+        "type": "object",
+        "properties": {
+          "referenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "transactionType": {
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "transactionType"
+        }
+      },
+      "AuthorizeTransactionCreateDTO": {
+        "required": [
+          "amount",
+          "customerEmail",
+          "customerPhone"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AbstractTransactionCreateDTO"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "customerEmail": {
+                "type": "string",
+                "example": "customer@mail.io"
+              },
+              "customerPhone": {
+                "type": "string",
+                "example": "+1234567890"
+              },
+              "amount": {
+                "type": "number",
+                "example": 100.5
+              }
+            }
+          }
+        ]
+      },
+      "ChargeTransactionCreateDTO": {
+        "required": [
+          "amount"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AbstractTransactionCreateDTO"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "example": 100.5
+              }
+            }
+          }
+        ]
+      },
+      "RefundTransactionCreateDTO": {
+        "required": [
+          "amount"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AbstractTransactionCreateDTO"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "example": 100.5
+              }
+            }
+          }
+        ]
+      },
+      "ReversalTransactionCreateDTO": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AbstractTransactionCreateDTO"
+          }
+        ]
+      },
+      "PageTransactionViewDTO": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionViewDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "unpaged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TransactionViewDTO": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "belongsTo": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REVERSED",
+              "REFUNDED",
+              "ERROR"
+            ]
+          },
+          "referenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerEmail": {
+            "type": "string"
+          },
+          "customerPhone": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "transactionType": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

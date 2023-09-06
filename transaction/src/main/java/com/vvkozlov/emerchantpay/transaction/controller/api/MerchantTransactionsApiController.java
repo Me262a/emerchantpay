@@ -11,23 +11,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Transaction controller to manage transactions.
+ * Controller to query data related to specific merchant
  */
 @RestController
 @RequestMapping("/api/merchants")
 @PreAuthorize("hasAuthority(T(com.vvkozlov.emerchantpay.transaction.domain.constants.UserRoles).ROLE_ADMIN)")
-public class MerchantApiController {
+public class MerchantTransactionsApiController {
 
     private final MerchantTransactionsRetrievalService merchantTransactionsRetrievalService;
 
     @Autowired
-    public MerchantApiController(MerchantTransactionsRetrievalService merchantTransactionsRetrievalService) {
+    public MerchantTransactionsApiController(MerchantTransactionsRetrievalService merchantTransactionsRetrievalService) {
         this.merchantTransactionsRetrievalService = merchantTransactionsRetrievalService;
     }
 
-    @Operation(summary = "Checks if specified merchant id has related transactions",
-            description = "Returns a boolean of check result. " +
-                    "Protection for this method to be added for real application")
+    @Operation(summary = "Checks if specified merchant id has associated transactions",
+            description = "Returns true if the merchant has associated transactions, false if not.")
     @GetMapping("{merchantId}/transactions/exist")
     public ResponseEntity<Boolean> hasTransactionsForMerchant(@PathVariable String merchantId) {
         boolean hasTransactions = merchantTransactionsRetrievalService.transactionsExistForMerchant(merchantId);

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 /**
- * Transaction controller to manage transactions.
+ * Controller to manage transactions.
  */
 @RestController
 @RequestMapping("/ui/transactions")
@@ -36,8 +36,7 @@ public class TransactionUIController {
         this.transactionHandlingService = transactionHandlingService;
     }
 
-    @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid. " +
-            "Any transaction, any role, not restricted to current user yet")
+    @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid")
     @GetMapping("{uuid}")
     public ResponseEntity<TransactionViewDTO> getTransaction(@PathVariable UUID uuid, @AuthenticationPrincipal Jwt jwt) {
         var operationResult = transactionRetrievalService.getTransaction(jwt.getClaimAsString("sub"), uuid);
@@ -48,8 +47,9 @@ public class TransactionUIController {
         }
     }
 
-    @Operation(summary = "Get a transaction by uuid", description = "Returns a transaction data as per the uuid. " +
-            "All transactions on the server, any role, not restricted to current user yet")
+    @Operation(summary = "Get paged transactions",
+            description = "Specify page number, size, and sort order. Returns a list of transactions in a page."
+    )
     @GetMapping("")
     public ResponseEntity<Page<TransactionViewDTO>> getTransactions(
             @Parameter(hidden = true) Pageable pageable,
@@ -66,7 +66,7 @@ public class TransactionUIController {
         }
     }
 
-    @Operation(summary = "Creates a transaction.", description = "Restricted to merchant role.")
+    @Operation(summary = "Creates a transaction.", description = "Returns a created transaction or error message.")
     @PostMapping("")
     public ResponseEntity<Object> createTransaction(
             @RequestBody AbstractTransactionCreateDTO createDto,

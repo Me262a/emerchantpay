@@ -31,8 +31,8 @@ In Intellij Idea you can right-click on the compose file and run.
 - com.vvkozlov.emerchantpay.transaction.TransactionApplication (Transaction folder)
 
 3. Run Web UI
-Tested with yarn package manager. But npm should also work.
-- execute "yarn start" or "npm start" from web-ui folder
+- execute "yarn install" ("npm install") from the web-ui folder  
+- execute "yarn start" ("npm start") from the web-ui folder  
 
 ## How to use
 1. Ensure that all applications are running
@@ -83,17 +83,24 @@ Useful links:
    (or "stage_")  
 
 4. Merchant service Swagger UI:  
-   http://localhost:8081/swagger-ui/index.html#
-
+   http://localhost:8081/swagger-ui/index.html#  
+   Offline doc: [`swagger.html`](./merchant/src/main/resources/docs/swagger.html)
 5. Transaction Microservice Swagger UI:  
-   http://localhost:8082/swagger-ui/index.html#/
+   http://localhost:8082/swagger-ui/index.html#  
+   Offline doc: [`swagger.html`](./transaction/src/main/resources/docs/swagger.html)
+
+## Doc generation:  
+To generate docs, execute from microservice root:  
+npm install -g @redocly/openapi-cli  
+./gradlew clean generateOpenApiDocs  
+./gradlew generateHtmlDocs  
 
 ## Tests
 All tests are checked and working.  
 For keycloak test, run docker-compose-dev to get dev keycloak instance  
 In IntelliJ idea, tests can be run by clicking on test folder and choosing "Run tests"
 
-## Swagger Auth
+## Endpoints for Swagger Authentication:
 1. Get Merchant Admin JWT from keycloak:  
    curl --location 'http://localhost:5451/realms/emerchantpay/protocol/openid-connect/token' \  
    --header 'content-type: application/x-www-form-urlencoded' \  

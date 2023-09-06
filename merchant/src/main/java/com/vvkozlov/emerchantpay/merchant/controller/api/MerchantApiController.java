@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Admin controller to manage merchants and import admins.
+ * Controller to manage merchants and import admins.
  */
 @RestController
 @RequestMapping("/api/merchants")

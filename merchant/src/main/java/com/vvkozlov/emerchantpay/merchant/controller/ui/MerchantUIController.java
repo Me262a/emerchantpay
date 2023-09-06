@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Admin controller to manage merchants and import admins.
+ * Controller to manage existing merchants.
  */
 @RestController
 @RequestMapping("/ui/merchants")

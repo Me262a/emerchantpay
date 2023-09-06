@@ -1,0 +1,541 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Merchant API",
+    "description": "UI and API endpoints for merchant microservice",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8081",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/ui/merchants/{id}": {
+      "get": {
+        "tags": [
+          "merchant-ui-controller"
+        ],
+        "summary": "Get a merchant by id",
+        "description": "Returns a merchant data as per the id.",
+        "operationId": "getMerchant",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "The merchant was not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantViewDTO"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Successfully retrieved",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantViewDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "merchant-ui-controller"
+        ],
+        "summary": "Update a merchant data by id",
+        "description": "Update a merchant. Returns an updated merchant data.",
+        "operationId": "updateMerchant",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MerchantEditDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Server error - check the server log",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantViewDTO"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Successfully retrieved",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantViewDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "merchant-ui-controller"
+        ],
+        "summary": "Remove a merchant by user auth ID",
+        "description": "Delete a merchant based on the provided user ID.",
+        "operationId": "removeMerchantById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully removed the merchant",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error - check the server log",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ui/merchants/import": {
+      "post": {
+        "tags": [
+          "merchant-import-ui-controller"
+        ],
+        "summary": "Import new merchants",
+        "description": "Import merchants from pre-defined csv file in classpath. Returns list of imported merchants.",
+        "operationId": "importMerchantsFromCsv",
+        "responses": {
+          "500": {
+            "description": "Server error - check the server log",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BaseUserViewDTO"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Successfully imported",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BaseUserViewDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ui/admins/import": {
+      "post": {
+        "tags": [
+          "admin-import-ui-controller"
+        ],
+        "summary": "Import new admins",
+        "description": "Import admins from pre-defined csv file in classpath.",
+        "operationId": "importAdminsFromCsv",
+        "responses": {
+          "500": {
+            "description": "Server error - check the server log",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BaseUserViewDTO"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Successfully imported",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BaseUserViewDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ui/merchants": {
+      "get": {
+        "tags": [
+          "merchant-ui-controller"
+        ],
+        "summary": "Get a paged list of merchants",
+        "description": "Specify page number, size, and sort order. Returns a merchant data list.",
+        "operationId": "getMerchants",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 0
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Items per page",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 10
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "name,asc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageMerchantViewDTO"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error - the check server log",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageMerchantViewDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "merchant-ui-controller"
+        ],
+        "summary": "Remove all merchants",
+        "description": "Delete all merchants from the current microservice and auth server.",
+        "operationId": "removeAllMerchants",
+        "responses": {
+          "500": {
+            "description": "Server error - check the server log",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Successfully removed all merchants",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/merchants/is-active": {
+      "get": {
+        "tags": [
+          "merchant-api-controller"
+        ],
+        "summary": "Get a merchant status by uuid",
+        "description": "Returns a merchant status data as per the uuid.",
+        "operationId": "getIsMerchantActive",
+        "responses": {
+          "404": {
+            "description": "The merchant was not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Successfully retrieved",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MerchantEditDTO": {
+        "required": [
+          "description",
+          "email",
+          "name",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "ABC Store"
+          },
+          "description": {
+            "type": "string",
+            "example": "ABC Store in City 17"
+          },
+          "email": {
+            "type": "string",
+            "example": "company@mail.io"
+          },
+          "status": {
+            "type": "string",
+            "example": "ACTIVE",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ]
+          }
+        }
+      },
+      "MerchantViewDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ]
+          },
+          "totalTransactionSum": {
+            "type": "number"
+          }
+        }
+      },
+      "BaseUserViewDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "PageMerchantViewDTO": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MerchantViewDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unpaged": {
+            "type": "boolean"
+          },
+          "paged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
